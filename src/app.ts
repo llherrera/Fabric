@@ -11,6 +11,7 @@ app.use(express.json());
 
 
 app.use(Path.Base, router.IndexRouter);
+app.use(Path.Base, router.LoadRouter);
 
 app.use((req, res) => {
     res.status(404).json({ msg: 'Not found' });

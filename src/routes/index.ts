@@ -1,4 +1,5 @@
-import { Request, Response, Router, NextFunction } from 'express';
+import { Request, Response, Router } from 'express';
+import { LoadRouter } from './loadfile.route';
 
 const router = Router();
 
@@ -11,4 +12,5 @@ router.get('/ping', async (req : Request, res : Response) => {
 
 export {
     router as IndexRouter,
+    LoadRouter,
 };
