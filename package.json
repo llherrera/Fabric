@@ -2,7 +2,7 @@
   "name": "fabric-siigo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
     "start": "npm run build && node dist/index.js",
     "build": "tsc",
@@ -16,18 +16,28 @@
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
     "express": "^4.19.2",
-    "multer": "^1.4.5-lts.1",
-    "xlsx": "^0.18.5"
+    "file-saver": "^2.0.5",
+    "multer": "^1.4.5-lts.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/file-saver": "^2.0.7",
+    "@types/multer": "^1.4.11",
     "@types/node": "^20.12.8",
     "jest": "^29.7.0",
     "nodemon": "^3.1.0",
+    "supertest": "^7.0.0",
     "ts-jest": "^29.1.2",
     "typescript": "^5.4.5"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**/spec/**",
+      "**/uploads/**"
+    ]
   }
 }
