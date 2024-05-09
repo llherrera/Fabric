@@ -9,7 +9,7 @@ interface Props {
 export const validateLength = (value: string, len: number) => {
     return value.length === len;
 }
-// preguntar si se puede usar expresion regular para esta funcion (osea si la cantidad de valores es exacto o puede ser menor)
+
 export const validateDecimals = (value: number, intergersCount: number, decimalsCount: number) => {
     const valorString = value.toString();
     const partes = valorString.split('.');
@@ -26,7 +26,7 @@ export const validateCode = (value: string) => {
     const regex: RegExp = /^[A-Z]-\d{3}$/;
     return regex.test(value)
 }
-// OJO
+
 export const validateLetter = (value: string, values: string[]) => {
     return values.includes(value);
 }
@@ -158,7 +158,7 @@ export const generateExcel1 = async (data: SiigoFormat1[]): Promise<string> => {
         { header: 'NUMERO_ESTABLECIMIENTO', key: 'NUMERO_ESTABLECIMIENTO', width: 20 }
     ];
 
-    worksheet.mergeCells('A1:DP1');
+    //worksheet.mergeCells('A1:DP1');
     worksheet.mergeCells('A2:DP2');
     worksheet.mergeCells('A3:DP3');
     worksheet.mergeCells('A4:DP4');
@@ -205,3 +205,5 @@ export const testExcel = async (data: string) => {
     })
     fs.writeFileSync(`${data.split('.')[0]}.json`, JSON.stringify(jsonData));
 }
+// preguntar si se puede usar expresion regular para esta funcion (osea si la cantidad de valores es exacto o puede ser menor)
+// OJO
