@@ -1,5 +1,5 @@
-import { validateLength, validateDecimals, validateNIT, validateCode, validateLetter } from "../utils/functions.utils";
-import { ErrorMessages } from "src/utils/constants";
+import { validateLength, validateDecimals, validateNIT, validateCode, validateLetter } from "../utils/functions.utils.ts";
+import { ErrorMessages } from "src/utils/constants.ts";
 
 export class SiigoFormat1 {
     TIPO_DE_COMPROBANTE_OBLIGATORIO: string;                    // len 1 (F, G o P)

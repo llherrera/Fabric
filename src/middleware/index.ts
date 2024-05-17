@@ -1,1 +1,1 @@
-export * from './fileManager.middleware';
+export * from './fileManager.middleware.ts';

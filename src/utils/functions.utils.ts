@@ -1,10 +1,12 @@
-import { SiigoFormat1 } from "../interfaces";
+import { SiigoFormat1 } from "../interfaces/index.ts";
 import ExcelJS, { Row, Cell } from 'exceljs';
 import fs from 'fs';
+import { diceCoefficient } from 'dice-coefficient';
 
 interface Props {
-    [key:string]: string;
+    [key:string]: string[];
 }
+
 
 export const validateLength = (value: string, len: number) => {
     return value.length === len;
@@ -198,12 +200,82 @@ export const testExcel = async (data: string) => {
             let rowData: Props = {};
             row.eachCell((cell: Cell, colNumber: number) => {
                 const fieldName = worksheet.getRow(5).getCell(colNumber).value?.toString() ?? `EMPTY_${colNumber}`;
-                rowData[fieldName] = cell.value?.toString() ?? 'VOID';
+                rowData[fieldName] = [cell.value?.toString() ?? 'VOID'];
             })
             jsonData.push(rowData)
         }
     })
     fs.writeFileSync(`${data.split('.')[0]}.json`, JSON.stringify(jsonData));
 }
-// preguntar si se puede usar expresion regular para esta funcion (osea si la cantidad de valores es exacto o puede ser menor)
-// OJO
+
+/*  los parametros de la función 
+    path:  la ruta del fichero xlsx de donde se obtiene la información para el JSON
+    row_:  es la fila desde donde comienza los datos en el xlsx
+    sheet: es la hoja de donde se quiere sacar la información del xlsx, por defecto es la hoja 0 que es la primera
+    key:   es la columna que se quiere usar como identificador de los valores en cada fila, por defecto es 0
+    
+    la salida de esta función genera un fichero JSON
+    SIIGO
+    Insumos: la key es la descripcion y el valor es un arreglo de 3 elementos (Línea producto, Grupo producto, Código producto respectivamente)
+    Telas: la key es la descripción y el valor es un arreglo de 3 elementos (Línea producto, Grupo producto, Código producto respectivamente)
+    Terminado: la key es la descripción y el valor es un arreglo de 4 elementos (Línea producto, Grupo producto, Código producto, Ref siigo respectivamente)
+
+    LIDER
+    Insumos: la key es la descripción y el valor es un arreglo de 2 elementos (Código, Color respectivamente)
+    Telas: la descripción y el valor es un arreglo de 1 elementos (color)
+    Terminado: la key es la referencia_antigua y el valor es un arreglo de 1 elementos (color)
+
+    CATALOGO
+    Tallas: la key es la descripción y el value es un array de 1 elemento (codigo_siigo)
+    Colores: la key es la descripción y el value es un array de 1 elemento (codigo_siigo)
+    Bodegas: la key es el nombre y el value es un array de 1 elemento (codigo_siigo)
+*/
+export const readileToGenerateJsonFile = async (path: string, row_: number, sheet: number = 0, key: number = 0) => {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(path);
+    const worksheet = workbook.worksheets[sheet];
+    let jsonData: Props = {};
+
+    worksheet.eachRow({includeEmpty: true}, (row: Row, rowNumber: number) => {
+        if (rowNumber > row_) {
+            let rowData: Props = {};
+            let temp = [];
+            row.eachCell((cell: Cell, colNumber: number) => {
+                if (colNumber !== key) {
+                    let fieldName = worksheet.getRow(rowNumber).getCell(key).value?.toString() ?? `EMPTY_${key}`;
+                    fieldName = fieldName.replace(/  +/g, "");
+                    fieldName = fieldName.replace(/[0-9]-[0-9]{1,3} ?/g, "");
+                    const value = (cell.value?.toString() ?? 'VOID').replace(/  +/g, "")
+                    temp.push(value);
+                    rowData[fieldName] = temp;
+                }
+            });
+            jsonData = { ...jsonData,...rowData};
+        }
+    });
+    fs.writeFileSync(`./uploads/${worksheet.name}.json`, JSON.stringify(jsonData));
+    fs.unlinkSync(path);
+}
+
+export const createTableMatch = async (file_lider: Props, file_siigo: Props, catalogue: Props): Promise<Props> => {
+    let data_match: Props = {};
+    for (const key_lider in file_lider) {
+        for (const key_siigo in file_siigo) {
+            if (diceCoefficient(key_lider, key_siigo) > 0.7) {
+                data_match = {
+                    ...data_match,
+                    [key_lider]: file_siigo[key_siigo]
+                };
+            }
+        }
+        for (const key_color in catalogue) {
+            const color = file_lider[key_lider][1] ?? 'TRANSPARENTE'
+            if (diceCoefficient(color, key_color) > 0.7 && data_match[key_lider] !== undefined) {
+                //console.log(data_match[key_lider], catalogue[key_color][0]);
+                data_match[key_lider].push(catalogue[key_color][0])
+            }
+        }
+    }
+    fs.writeFileSync(`./uploads/data-matched.json`, JSON.stringify(data_match));
+    return data_match;
+}

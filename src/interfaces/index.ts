@@ -1,1 +1,1 @@
-export * from './siigoFormat'
+export * from './siigoFormat.ts'

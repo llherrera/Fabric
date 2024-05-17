@@ -2,7 +2,11 @@
   "name": "fabric-siigo",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.ts",
+  "exports": "./src/index.ts",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "npm run build && node dist/index.js",
     "build": "tsc",
@@ -15,6 +19,7 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
+    "dice-coefficient": "^2.1.1",
     "dotenv": "^16.4.5",
     "exceljs": "^4.4.0",
     "express": "^4.19.2",

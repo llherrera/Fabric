@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { LoadRouter } from './loadfile.route';
+import { LoadRouter } from './loadfile.route.ts';
 
 const router = Router();
 

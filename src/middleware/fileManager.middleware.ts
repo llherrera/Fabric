@@ -1,13 +1,12 @@
 import { Request, Response, NextFunction } from "express";
-import { Path } from "../utils/constants";
+import { Path } from "../utils/constants.ts";
+import multer from 'multer';
 
 export interface ExtRequest extends Record<string, any> {};
 
-const multer = require('multer');
-
 const fileFilter = (req: Request, file: any, cb: any) => {
     const allowedMimes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
-    if (allowedMimes.includes(file.mimetype) && req.path === Path.Load) {
+    if (allowedMimes.includes(file.mimetype)) {
         cb(null, true);
     } else {
         cb(new Error('Invalid file type'), false);
@@ -30,7 +29,7 @@ const upload = multer({
     storage
 });
 
-export const fileManager = async (req: ExtRequest, res: Response, next: NextFunction) => {
+export const fileManager = async (req: any, res: Response, next: NextFunction) => {
     upload.single('file')(req, res, async (err: any) => {
         if (err instanceof multer.MulterError) {
             return res.status(400).json({
