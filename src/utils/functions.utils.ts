@@ -3,6 +3,13 @@ import ExcelJS, { Row, Cell } from 'exceljs';
 import fs from 'fs';
 import { diceCoefficient } from 'dice-coefficient';
 
+import insumo_siigo from '../../uploads/insumos_siigo.json' assert { type: 'json' };
+import telas_siigo from '../../uploads/Telas_Siigo.json' assert { type: 'json' };
+import terminado_siigo from '../../uploads/Producto Terminado SIIGO.json' assert { type: 'json' };
+import colores from '../../uploads/COLORES.json' assert { type: 'json' };
+import tallas from '../../uploads/TALLA.json' assert { type: 'json' };
+import bodegas from '../../uploads/BODEGAS.json' assert { type: 'json' };
+
 interface Props {
     [key:string]: string[];
 }
@@ -236,16 +243,26 @@ export const readileToGenerateJsonFile = async (path: string, row_: number, shee
     const worksheet = workbook.worksheets[sheet];
     let jsonData: Props = {};
 
+    const colums = worksheet.getColumn(key+1);
+    if (row_ === 1 && sheet % 2 === 1) {
+        colums.eachCell((cell) => {
+            if (cell.value === null) cell.value = 'BLANCO';
+        });
+    }
+
     worksheet.eachRow({includeEmpty: true}, (row: Row, rowNumber: number) => {
         if (rowNumber > row_) {
             let rowData: Props = {};
-            let temp = [];
+            let temp: string[] = [];
             row.eachCell((cell: Cell, colNumber: number) => {
                 if (colNumber !== key) {
                     let fieldName = worksheet.getRow(rowNumber).getCell(key).value?.toString() ?? `EMPTY_${key}`;
                     fieldName = fieldName.replace(/  +/g, "");
-                    fieldName = fieldName.replace(/[0-9]-[0-9]{1,3} ?/g, "");
-                    const value = (cell.value?.toString() ?? 'VOID').replace(/  +/g, "")
+                    //fieldName = fieldName.replace(/[0-9]{1,4} ?(- ?[0-9]{1,4}){1,2} ?/g, "");
+                    fieldName = fieldName.replace(/ +$/, "");
+                    //const value = (cell.value?.toString() ?? 'BLANCO').replace(/  +/g, "");
+                    let value = (cell.value?.toString() ?? '').replace(/ +$/g, "");
+                    value = value === '[object Object]' ? `${temp[colNumber-3]}-${temp[colNumber-2]}` : value;
                     temp.push(value);
                     rowData[fieldName] = temp;
                 }
@@ -257,7 +274,7 @@ export const readileToGenerateJsonFile = async (path: string, row_: number, shee
     fs.unlinkSync(path);
 }
 
-export const createTableMatch = async (file_lider: Props, file_siigo: Props, catalogue: Props): Promise<Props> => {
+export const createTableMatch = (file_lider: Props, file_siigo: Props, catalogue: Props): Props => {
     let data_match: Props = {};
     for (const key_lider in file_lider) {
         for (const key_siigo in file_siigo) {
@@ -278,4 +295,142 @@ export const createTableMatch = async (file_lider: Props, file_siigo: Props, cat
     }
     fs.writeFileSync(`./uploads/data-matched.json`, JSON.stringify(data_match));
     return data_match;
+}
+
+export const createTableColorMatch = (file_lider: Props, catalogue: Props, name: string): Props => {
+    let data_match: Props = {};
+    for (const key_lider in file_lider) {
+        for (const key_color in catalogue) {
+            const color = file_lider[key_lider][1] ?? 'BLANCO'
+            if (diceCoefficient(color, key_color) > 0.7) {
+                let temp = file_lider[key_lider]
+                temp.push(catalogue[key_color][0])
+                data_match = {
+                    ...data_match,
+                    [key_lider]: temp
+                }
+                //data_match[key_lider].push(catalogue[key_color][0])
+            }
+        }
+    }
+    fs.writeFileSync(`./uploads/${name}.json`, JSON.stringify(data_match));
+    return data_match;
+}
+
+export const generateExcelColor = async (data: Props, name: string): Promise<string> => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet();
+
+    worksheet.columns = [
+        { header: 'Código', key: 'codigo', width: 10 },
+        { header: 'Descripción', key: 'descripcion', width: 50 },
+        { header: 'Color', key: 'color', width: 15 },
+        { header: 'Código Color', key: 'codigo_color', width: 10 },
+    ]
+
+    worksheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: '99CCFF' },
+    }
+
+    worksheet.getColumn(1).alignment = { horizontal: 'center' };
+    worksheet.getColumn(3).alignment = { horizontal: 'center' };
+    worksheet.getColumn(4).alignment = { horizontal: 'center' };
+
+    worksheet.getColumn(1).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
+    worksheet.getColumn(2).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
+    worksheet.getColumn(3).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
+    worksheet.getColumn(4).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
+
+    for (const key in data) {
+        worksheet.addRow({
+            codigo: data[key][0],
+            descripcion: key,
+            color: data[key][1],
+            codigo_color: data[key][2],
+        })
+    }
+
+    await workbook.xlsx.writeFile(`uploads/${name}.xlsx`);
+    return `uploads/${name}.xlsx`;
+}
+
+export const doMatchColorInFile = async (path: string, filename: string) => {
+    const workbook = new ExcelJS.Workbook();
+    const newWorkbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(path);
+    for (let i = 1; i < 6; i = i + 2) {
+        const worksheet = workbook.worksheets[i];
+        const sheetName = i === 1 ? 'Códigos Insumos' : i === 3 ? 'Códigos Telas' : 'Códigos Terminados';
+        const key = i === 1 ? 2 : i === 3 ? 1 : 1;
+        const newSheet = newWorkbook.addWorksheet(sheetName);
+
+        const colums = worksheet.getColumn(key+1);
+        colums.eachCell((cell) => {
+            if (cell.value === null) cell.value = 'BLANCO';
+        });
+
+        newSheet.columns = [
+            { header: 'Descripción', key: 'descripcion', width: 50 },
+            { header: 'Línea producto', key: 'linea_producto', width: 15 },
+            { header: 'Grupo producto', key: 'grupo_producto', width: 15 },
+            { header: 'Código producto', key: 'codigo_producto', width: 15 },
+            { header: 'Color', key: 'color', width: 15 },
+            { header: 'Código color', key: 'codigo_color', width: 15 },
+        ];
+        newSheet.getRow(1).fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: '99CCFF' },
+        }
+        newSheet.getColumn(2).alignment = { horizontal: 'center' };
+        newSheet.getColumn(3).alignment = { horizontal: 'center' };
+        newSheet.getColumn(4).alignment = { horizontal: 'center' };
+        newSheet.getColumn(5).alignment = { horizontal: 'center' };
+        newSheet.getColumn(6).alignment = { horizontal: 'center' };
+        newSheet.getColumn(1).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
+        newSheet.getColumn(2).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
+        newSheet.getColumn(3).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
+        newSheet.getColumn(4).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
+        newSheet.getColumn(5).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
+        newSheet.getColumn(6).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
+
+        worksheet.eachRow({includeEmpty: true}, (row: Row, rowNumber: number) => {
+            if (rowNumber > 1) {
+                let newRow: any = [];
+                row.eachCell((cell: Cell, colNumber: number) => {
+                    const file = colNumber === key ? (i === 1 ? insumo_siigo : i === 3 ? telas_siigo : terminado_siigo) : colores;
+                    if (i === 1) {
+                        if (colNumber > 1) {
+                            let values = getSiigoCode(cell.value?.toString() ?? 'BLANCO', file, false);
+                            values = values?? ['','',''];
+                            newRow.push(cell.value, ...values);
+                        }
+                    } else {
+                        let values = getSiigoCode(cell.value?.toString() ?? 'BLANCO', file, i === 5);
+                        values = values?? ['','',''];
+                        newRow.push(cell.value, ...values);
+                    }
+                });
+                newSheet.addRow(newRow);
+            }
+        });
+    }
+    const name = `uploads/${filename}.xlsx`;
+    await newWorkbook.xlsx.writeFile(name);
+    return name;
+}
+
+const getSiigoCode = (key_lider: string, file_siigo: Props, isCode: boolean) => {
+    let key_field = key_lider.replace(/  +/g, "");
+    key_field = isCode ? key_lider : key_field.replace(/[0-9]{1,4} ?(- ?[0-9]{1,4}){1,2} ?/g, "");
+    key_field = key_field.replace(/ +$/, "");
+    for (const key in file_siigo) {
+        let key_ = isCode ? file_siigo[key][3] : key;
+        let assertion = isCode ? 0.999 : 0.7
+        if (diceCoefficient(key_, key_field) > assertion) {
+            return file_siigo[key].slice(0,3);
+        }
+    }
 }

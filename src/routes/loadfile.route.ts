@@ -11,8 +11,8 @@ const { Load } = Path;
 // router.post(Load, fileManager, controller.someName);
 
 // borrar cuanto antes (cuando se tenga automatizado la carga de fichero y la generacion de la tabla de convergencia, de momento esta ruta genera la tabla mas no la envia)
-router.get('/data-match', controller.generateTableMatched);
-router.get('/tabla-match', controller.getTableMatched);
+router.get('/color-match', controller.generateTableColorMatched);
+router.get('/color-table', controller.getColorTableMatched);
 
 
 router.post('/insumos-siigo', fileManager, controller.generateInsumosSiigoFile);
@@ -28,6 +28,9 @@ router.post('/terminado-lider', fileManager, controller.generateTerminadoLiderFi
 router.post('/tallas', fileManager, controller.generateTallasFile);
 router.post('/colores', fileManager, controller.generateColoresFile);
 router.post('/bodegas', fileManager, controller.generatebodegasFile);
+
+
+router.post('/add-color-code', fileManager, controller.addColorCode);
 
 
 export { router as LoadRouter };

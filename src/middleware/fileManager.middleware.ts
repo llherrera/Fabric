@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { Path } from "../utils/constants.ts";
 import multer from 'multer';
 
 export interface ExtRequest extends Record<string, any> {};
@@ -43,7 +42,7 @@ export const fileManager = async (req: any, res: Response, next: NextFunction) =
         }
         try {
             const file = req.file;
-            req.body = {...req.body, path: file.path}
+            req.body = {...req.body, path_file: file.path}
             next();
         } catch (error) {
             res.status(500).json({msg: error});
