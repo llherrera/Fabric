@@ -2,6 +2,7 @@ import { SiigoFormat1 } from "../interfaces/index.ts";
 import ExcelJS, { Row, Cell } from 'exceljs';
 import fs from 'fs';
 import { diceCoefficient } from 'dice-coefficient';
+import { JSONInterface, JSONInterfaceData, JSONInterfaceExcel } from "../interfaces/index.ts";
 
 import insumo_siigo from '../../uploads/insumos_siigo.json' assert { type: 'json' };
 import telas_siigo from '../../uploads/Telas_Siigo.json' assert { type: 'json' };
@@ -9,10 +10,6 @@ import terminado_siigo from '../../uploads/Producto Terminado SIIGO.json' assert
 import colores from '../../uploads/COLORES.json' assert { type: 'json' };
 import tallas from '../../uploads/TALLA.json' assert { type: 'json' };
 import bodegas from '../../uploads/BODEGAS.json' assert { type: 'json' };
-
-interface Props {
-    [key:string]: string[];
-}
 
 
 export const validateLength = (value: string, len: number) => {
@@ -201,10 +198,10 @@ export const testExcel = async (data: string) => {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(data);
     const worksheet = workbook.worksheets[0];
-    const jsonData: Props[] = [];
+    const jsonData: JSONInterface[] = [];
     worksheet.eachRow({includeEmpty: true}, (row: Row, rowNumber: number) => {
         if (rowNumber > 5) {
-            let rowData: Props = {};
+            let rowData: JSONInterface = {};
             row.eachCell((cell: Cell, colNumber: number) => {
                 const fieldName = worksheet.getRow(5).getCell(colNumber).value?.toString() ?? `EMPTY_${colNumber}`;
                 rowData[fieldName] = [cell.value?.toString() ?? 'VOID'];
@@ -237,11 +234,11 @@ export const testExcel = async (data: string) => {
     Colores: la key es la descripción y el value es un array de 1 elemento (codigo_siigo)
     Bodegas: la key es el nombre y el value es un array de 1 elemento (codigo_siigo)
 */
-export const readileToGenerateJsonFile = async (path: string, row_: number, sheet: number = 0, key: number = 0) => {
+export const readFileToGenerateJsonFile = async (path: string, row_: number, sheet: number = 0, key: number = 0) => {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(path);
     const worksheet = workbook.worksheets[sheet];
-    let jsonData: Props = {};
+    let jsonData: JSONInterface = {};
 
     const colums = worksheet.getColumn(key+1);
     if (row_ === 1 && sheet % 2 === 1) {
@@ -252,7 +249,7 @@ export const readileToGenerateJsonFile = async (path: string, row_: number, shee
 
     worksheet.eachRow({includeEmpty: true}, (row: Row, rowNumber: number) => {
         if (rowNumber > row_) {
-            let rowData: Props = {};
+            let rowData: JSONInterface = {};
             let temp: string[] = [];
             row.eachCell((cell: Cell, colNumber: number) => {
                 if (colNumber !== key) {
@@ -274,8 +271,36 @@ export const readileToGenerateJsonFile = async (path: string, row_: number, shee
     fs.unlinkSync(path);
 }
 
-export const createTableMatch = (file_lider: Props, file_siigo: Props, catalogue: Props): Props => {
-    let data_match: Props = {};
+export const readInputFile = async (path: string, filename: string, rowStart: number) => {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(path);
+    const worksheet = workbook.worksheets[0];
+    let jsonData: JSONInterfaceExcel = {};
+
+    worksheet.eachRow({includeEmpty: true}, (row: Row, rowNumber: number) => {
+        if (rowNumber > rowStart) {
+            let rowData: JSONInterfaceData = {};
+
+            let fieldName = worksheet.getRow(rowNumber).getCell(2).value?.toString() ?? `EMPTY_${2}`;
+            fieldName = fieldName.replace(/  +/g, "");
+            fieldName = fieldName.replace(/ +$/, "");
+
+            row.eachCell((cell: Cell, colNumber: number) => {
+                if (colNumber != 2) {
+                    let value = (cell.value?.toString() ?? 'Vacio').replace(/ +$/g, "");
+                    let valueName = worksheet.getRow(rowStart).getCell(colNumber).value?.toString() ?? `EMPTY_${2}`;
+                    rowData[valueName] = value;
+                }
+            });
+            jsonData[fieldName] = [...jsonData[fieldName]??[], rowData];
+        }
+    });
+    fs.writeFileSync(`./uploads/${filename}.json`, JSON.stringify(jsonData));
+    fs.unlinkSync(path);
+}
+
+export const createTableMatch = (file_lider: JSONInterface, file_siigo: JSONInterface, catalogue: JSONInterface): JSONInterface => {
+    let data_match: JSONInterface = {};
     for (const key_lider in file_lider) {
         for (const key_siigo in file_siigo) {
             if (diceCoefficient(key_lider, key_siigo) > 0.7) {
@@ -297,8 +322,8 @@ export const createTableMatch = (file_lider: Props, file_siigo: Props, catalogue
     return data_match;
 }
 
-export const createTableColorMatch = (file_lider: Props, catalogue: Props, name: string): Props => {
-    let data_match: Props = {};
+export const createTableColorMatch = (file_lider: JSONInterface, catalogue: JSONInterface, name: string): JSONInterface => {
+    let data_match: JSONInterface = {};
     for (const key_lider in file_lider) {
         for (const key_color in catalogue) {
             const color = file_lider[key_lider][1] ?? 'BLANCO'
@@ -317,7 +342,7 @@ export const createTableColorMatch = (file_lider: Props, catalogue: Props, name:
     return data_match;
 }
 
-export const generateExcelColor = async (data: Props, name: string): Promise<string> => {
+export const generateExcelColor = async (data: JSONInterface, name: string): Promise<string> => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet();
 
@@ -422,7 +447,7 @@ export const doMatchColorInFile = async (path: string, filename: string) => {
     return name;
 }
 
-const getSiigoCode = (key_lider: string, file_siigo: Props, isCode: boolean) => {
+const getSiigoCode = (key_lider: string, file_siigo: JSONInterface, isCode: boolean) => {
     let key_field = key_lider.replace(/  +/g, "");
     key_field = isCode ? key_lider : key_field.replace(/[0-9]{1,4} ?(- ?[0-9]{1,4}){1,2} ?/g, "");
     key_field = key_field.replace(/ +$/, "");

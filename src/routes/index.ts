@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import { LoadRouter } from './loadfile.route.ts';
+import { orderRouter } from './order.route.ts';
 
 const router = Router();
 
@@ -13,4 +14,5 @@ router.get('/ping', async (req : Request, res : Response) => {
 export {
     router as IndexRouter,
     LoadRouter,
+    orderRouter,
 };

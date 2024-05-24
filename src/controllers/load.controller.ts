@@ -25,55 +25,55 @@ export const someName = async (req: Request, res: Response) => {
 
 export const generateInsumosSiigoFile = async (req: Request, res: Response) => {
     const { path_file } = req.body
-    await funct.readileToGenerateJsonFile(path_file, 1, 0, 4);
+    await funct.readFileToGenerateJsonFile(path_file, 1, 0, 4);
     res.status(204).json();
 }
 
 export const generateInsumoLiderFile = async (req: Request, res: Response) => {
     const { path_file } = req.body
-    await funct.readileToGenerateJsonFile(path_file, 1, 1, 2);
+    await funct.readFileToGenerateJsonFile(path_file, 1, 1, 2);
     res.status(204).json();
 }
 
 export const generateTelasSiigoFile = async (req: Request, res: Response) => {
     const { path_file } = req.body
-    await funct.readileToGenerateJsonFile(path_file, 1, 2, 4);
+    await funct.readFileToGenerateJsonFile(path_file, 1, 2, 4);
     res.status(204).json();
 }
 
 export const generateTelasLiderFile = async (req: Request, res: Response) => {
     const { path_file } = req.body
-    await funct.readileToGenerateJsonFile(path_file, 1, 3, 1);
+    await funct.readFileToGenerateJsonFile(path_file, 1, 3, 1);
     res.status(204).json();
 }
 
 export const generateTerminadoSiigoFile = async (req: Request, res: Response) => {
     const { path_file } = req.body
-    await funct.readileToGenerateJsonFile(path_file, 1, 4, 5);
+    await funct.readFileToGenerateJsonFile(path_file, 1, 4, 5);
     res.status(204).json();
 }
 
 export const generateTerminadoLiderFile = async (req: Request, res: Response) => {
     const { path_file } = req.body
-    await funct.readileToGenerateJsonFile(path_file, 1, 5, 1);
+    await funct.readFileToGenerateJsonFile(path_file, 1, 5, 1);
     res.status(204).json();
 }
 
 export const generateTallasFile = async (req: Request, res: Response) => {
     const { path_file } = req.body
-    await funct.readileToGenerateJsonFile(path_file, 7, 0, 2);
+    await funct.readFileToGenerateJsonFile(path_file, 7, 0, 2);
     res.status(204).json();
 }
 
 export const generateColoresFile = async (req: Request, res: Response) => {
     const { path_file } = req.body
-    await funct.readileToGenerateJsonFile(path_file, 7, 1, 2);
+    await funct.readFileToGenerateJsonFile(path_file, 7, 1, 2);
     res.status(204).json();
 }
 
 export const generatebodegasFile = async (req: Request, res: Response) => {
     const { path_file } = req.body
-    await funct.readileToGenerateJsonFile(path_file, 7, 2, 2);
+    await funct.readFileToGenerateJsonFile(path_file, 7, 2, 2);
     res.status(204).json();
 }
 

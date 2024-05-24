@@ -12,6 +12,7 @@ app.use(express.json());
 
 app.use(Path.Base, router.IndexRouter);
 app.use('/cargar', router.LoadRouter);
+app.use('/orden', router.orderRouter);
 
 app.use((req, res) => {
     res.status(404).json({ msg: 'Not found' });
