@@ -7,7 +7,7 @@ const router = Router();
 const { Load } = Path;
 
 
-// router.get(Load, controller.getFile);
+router.get(Load, controller.getFile);
 // router.post(Load, fileManager, controller.someName);
 
 // borrar cuanto antes (cuando se tenga automatizado la carga de fichero y la generacion de la tabla de convergencia, de momento esta ruta genera la tabla mas no la envia)
