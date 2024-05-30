@@ -1,0 +1,801 @@
+openapi: 3.0.1
+info:
+  title: Lider-Cloudappi
+  version: 1.0.0
+  description: Lider-Cloudappi API
+  contact:
+    name: Cloudappi
+    email: leonardo.herrera.co@cloudappi.net
+
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+tags:
+  - name: Cargar
+    description: Rutas que permiten cargar información sobre las telas, insumos y productos que se manejan en Lider & CO
+  - name: Orden
+    description: Rutas que permiten obtener el formato a subir en Siigo a partir de los datos de las ordenes de compra
+
+paths:
+  /cargar/insumos-siigo:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los insumos según Siigo
+      description: Permite subir la información de los insumos en la que se relacionan los códigos de Siigo con los nombre de insumos por medio de Excel al sistema
+      operationId: loadInsumosSiigo
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/telas-siigo:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de las telas según Siigo
+      description: Permite subir la información de las telas en la que se relacionan los códigos de Siigo con los nombre de las telas por medio de Excel al sistema
+      operationId: loadTelasSiigo
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/productos-siigo:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los productos según Siigo
+      description: Permite subir la información de los productos en la que se relacionan los códigos de Siigo con los nombre de los productos por medio de Excel al sistema
+      operationId: loadProductosSiigo
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/insumos-lider:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los insumos según Lider
+      description: Permite subir la información de los insumos en la que se relacionan la descripción y color de los insumos en la base de datos de Lider por medio de Excel al sistema
+      operationId: loadInsumosLider
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/telas-lider:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de las telas según Lider
+      description: Permite subir la información de las telas en la que se relacionan la descripción y color de las telas en la base de datos de Lider por medio de Excel al sistema
+      operationId: loadTelasLider
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/productos-lider:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los productos según Lider
+      description: Permite subir la información de los productos en la que se relacionan la referencia antigua y color de los productos en la base de datos de Lider por medio de Excel al sistema
+      operationId: loadProductosLider
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/tallas:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información del catalogo de tallas de Lider
+      description: Permite subir la información del catalogo de tallas en la que se relacionan las tallas con el código de Siigo por medio de Excel al sistema
+      operationId: loadTallas
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/colores:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información del catalogo de colores de Lider
+      description: Permite subir la información del catalogo de colores en la que se relacionan los colores con el código de Siigo por medio de Excel al sistema
+      operationId: loadColores
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/bodegas:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información del catalogo de bodegas de Lider
+      description: Permite subir la información del catalogo de bodegas en la que se relacionan las bodegas con el código de Siigo por medio de Excel al sistema
+      operationId: loadBodegas
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/equivalencias:
+    get:
+      tags:
+        - Cargar
+      summary: Permite obtener la tabla de equivalencias
+      description: Permite obtener la tabla de equivalencias en la que relacionan los nombres de los insumos, telas, productos y su respectivo con los códigos de Siigo
+      operationId: equivalencias
+      responses:
+        '200':
+          description: Tabla de equivalencias creada con exito
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /orden:
+    get:
+      tags:
+        - Orden
+      summary: Genera la información de las ordenes de producto
+      description: A partir  de la información de Insumos y Telas genera el formato para cargar en Siigo
+      operationId: ordenFormat
+      responses:
+        '200':
+          description: Tabla de equivalencias creada con exito
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /orden/insumos:
+    post:
+      tags:
+        - Orden
+      summary: Permite cargar información de las ordenes de producción de insumos
+      description: Permite cargar la información de las ordenes de producción relacionadas con los insumos
+      operationId: ordenInsumos
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /orden/telas:
+    post:
+      tags:
+        - Orden
+      summary: Permite cargar información de las ordenes de producciónd de telas
+      description: Permite cargar la información de las ordenes de producción relacionadas con las telas
+      operationId: ordenTelas
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error400:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Bad Request
+        fields:
+          type: string
+    Error401:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Unauthorized
+        fields:
+          type: string
+    Error402:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Payment Required
+        fields:
+          type: string
+    Error403:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Forbidden
+        fields:
+          type: string
+    Error404:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Not Found
+        fields:
+          type: string
+    Error405:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Method Not Allowed
+        fields:
+          type: string
+    Error406:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Not Acceptable
+        fields:
+          type: string
+    Error407:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Proxy Authentication Required
+        fields:
+          type: string
+    Error408:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Request Timeout
+        fields:
+          type: string
+    Error409:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Conflict
+        fields:
+          type: string
+    Error410:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Gone
+        fields:
+          type: string
+    Error500:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Internal Server Error
+        fields:
+          type: string
+    Error501:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Not Implemented
+        fields:
+          type: string
+    Error502:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Bad Gateway
+        fields:
+          type: string
+    Error503:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Service Unavailable
+        fields:
+          type: string
+    Error504:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Gateway Timeout
+        fields:
+          type: string
+    Error505:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: HTTP Version Not Supported
+        fields:
+          type: string
+    Error506:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Variant Also Negotiates
+        fields:
+          type: string
+    Error507:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Insufficient Storage
+        fields:
+          type: string
+    Error508:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Loop Detected
+        fields:
+          type: string
+    Error509:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Bandwidth Limit Exceeded
+        fields:
+          type: string
+    Error510:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Not Extended
+        fields:
+          type: string

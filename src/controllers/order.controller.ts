@@ -21,12 +21,9 @@ export const setOrderTerminados = async (req: Request, res: Response) => {
 }
 
 export const generateSiigoFormat = async (req: Request, res: Response) => {
-    const filename = '';
-    const path_ = await funct.generateDataToFormat();
-    
-    
-    
-    const realPath = '';
+    const filename = 'O1-i';
+    const path_ = await funct.generateDataToFormat(filename);
+    const realPath = path.resolve(path_);
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment;filename=${filename}.xlsx`);
     res.sendFile(realPath);

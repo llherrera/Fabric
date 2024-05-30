@@ -1,17 +1,7 @@
 import ExcelJS, { Row, Cell } from 'exceljs';
 import fs from 'fs';
 import { diceCoefficient } from 'dice-coefficient';
-import { JSONInterface, JSONInterfaceData, JSONInterfaceExcel, Insumos, Telas, Producto, SiigoFormat, JSONInterfaceFormat } from "../interfaces/index.ts";
-
-import insumo_siigo from '../../uploads/insumos_siigo.json' assert { type: 'json' };
-import telas_siigo from '../../uploads/Telas_Siigo.json' assert { type: 'json' };
-import terminado_siigo from '../../uploads/Producto Terminado SIIGO.json' assert { type: 'json' };
-import colores from '../../uploads/COLORES.json' assert { type: 'json' };
-import tallas from '../../uploads/TALLA.json' assert { type: 'json' };
-import bodegas from '../../uploads/BODEGAS.json' assert { type: 'json' };
-import ProductoInsumos from '../../uploads/ProductosInsumos.json' assert { type: 'json' }; 
-import ProductoTelas from '../../uploads/ProductosTelas.json' assert { type: 'json' }; 
-
+import { JSONInterface, JSONInterfaceData, JSONInterfaceExcel, SiigoFormat, JSONInterfaceFormat } from "../interfaces/index.ts";
 
 export const validateLength = (value: string, len: number) => {
     return value.length === len;
@@ -38,6 +28,7 @@ export const validateLetter = (value: string, values: string[]) => {
     return values.includes(value);
 }
 
+//
 export const generateExcel1 = async (data: SiigoFormat[]): Promise<string> => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet();
@@ -218,7 +209,7 @@ export const readInputFile = async (path: string, filename: string, rowStart: nu
     const worksheet = workbook.worksheets[0];
     let jsonData: JSONInterfaceExcel = {};
 
-    worksheet.eachRow({includeEmpty: true}, (row: Row, rowNumber: number) => {
+    worksheet.eachRow((row: Row, rowNumber: number) => {
         if (rowNumber > rowStart) {
             let rowData: JSONInterfaceData = {};
 
@@ -378,24 +369,23 @@ export const doMatchColorInFile = async (path: string, filename: string) => {
                 let newRow: any = [];
                 row.eachCell((cell: Cell, colNumber: number) => {
                     let fieldName = worksheet.getRow(rowNumber).getCell(key).value?.toString() ?? `EMPTY_${key}`;
-                    const file = colNumber === key ? (i === 1 ? insumo_siigo : i === 3 ? telas_siigo : terminado_siigo) : colores;
-                    const aaaa = colNumber === key ? (i === 1 ? 'uploads/insumos_siigo.json' : 
+                    fieldName = fieldName.replace(/ +$/, "");
+                    const filePath = colNumber === key ? (i === 1 ? 'uploads/insumos_siigo.json' : 
                                                         i === 3 ? 'uploads/Telas_Siigo.json' : 
                                                         'uploads/Producto Terminado SIIGO.json') : 'uploads/COLORES.json';
-                    const eeee = JSON.parse(fs.readFileSync(aaaa, 'utf-8'));
+                    const file = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
                     if (i === 1) {
                         if (colNumber > 1) {
-                            //let values = getSiigoCode(cell.value?.toString() ?? 'BLANCO', file, false);
-                            let values = getSiigoCode(cell.value?.toString() ?? 'BLANCO', eeee, false);
+                            let values = getSiigoCode(cell.value?.toString() ?? 'BLANCO', file, false);
                             values = values?? ['','',''];
                             newRow.push(cell.value, ...values);
-                            aaaa !== 'uploads/COLORES.json' ? temp[fieldName] = values : null;
+                            filePath !== 'uploads/COLORES.json' ? temp[fieldName] = values : null;
                         }
                     } else {
-                        let values = getSiigoCode(cell.value?.toString() ?? 'BLANCO', eeee, i === 5);
+                        let values = getSiigoCode(cell.value?.toString() ?? 'BLANCO', file, i === 5);
                         values = values?? ['','',''];
                         newRow.push(cell.value, ...values);
-                        aaaa !== 'uploads/COLORES.json' ? temp[fieldName] = values : null;
+                        filePath !== 'uploads/COLORES.json' ? temp[fieldName] = values : null;
                     }
                 });
                 newSheet.addRow(newRow);
@@ -412,7 +402,7 @@ export const doMatchColorInFile = async (path: string, filename: string) => {
 export const getCategoryCode = (value: string, path: string) => {
     const productos = JSON.parse(fs.readFileSync(path, 'utf-8'));
     let values = getSiigoCode(value, productos, false);
-    values = values ?? ['','','']
+    values = values ?? ['','',''];
     return values;
 }
 
@@ -420,21 +410,27 @@ const getSiigoCode = (key_lider: string, file_siigo: JSONInterface, isCode: bool
     let key_field = key_lider.replace(/  +/g, "");
     key_field = isCode ? key_lider : key_field.replace(/[0-9]{1,4} ?(- ?[0-9]{1,4}){1,2} ?/g, "");
     key_field = key_field.replace(/ +$/, "");
+    let maxAssertion = 0;
+    let maxKey = '';
     for (const key in file_siigo) {
         let key_ = isCode ? file_siigo[key][3] : key;
         let assertion = isCode ? 0.999 : 0.7;
-        if (diceCoefficient(key_, key_field) > assertion) {
-            return file_siigo[key].slice(0,3);
+        let valueCoef = diceCoefficient(key_, key_field);
+        if (valueCoef > assertion) {
+            if (valueCoef > maxAssertion) {
+                maxKey = key;
+                maxAssertion = valueCoef;
+            } 
         }
     }
+    if(maxKey !== '') return file_siigo[maxKey].slice(0,3);
+    else return undefined;
 }
 
-export const generateDataToFormat = async (): Promise<JSONInterfaceFormat> => {
-    let data: JSONInterfaceFormat = {};
-    let coleccion = new Map<string, SiigoFormat[]>();
-
+const doDataToFormat = () => {
     const insumosData: JSONInterfaceExcel = JSON.parse(fs.readFileSync('uploads/ProductosInsumos.json', 'utf-8'));
     const telasData: JSONInterfaceExcel = JSON.parse(fs.readFileSync('uploads/ProductosTelas.json', 'utf-8'));
+    let coleccion = new Map<string, SiigoFormat[]>();
     for (const key in insumosData) {
         const items = insumosData[key];
         for (let i = 0; i < items.length; i++) {
@@ -445,14 +441,14 @@ export const generateDataToFormat = async (): Promise<JSONInterfaceFormat> => {
             const canti = parseFloat(insumosData[key][i]['Cantidad']);
             let register = new SiigoFormat(
                 1405053300,
-                'C,',
+                'C',
                 desct,
                 canti,
                 12,
                 "100"
             );
-            //register.setColor(getCodesByName(color,''));// corregir la funcion o acomodar el input para que lea solo el archivo de COLORES
-            //register.setCodigoBodega(taler); // hacer el acople o acomode para que lea el archivo de talleres
+            register.setCodigosSiigo(desct, 'Códigos Insumos');
+            register.setColor(color);
             if (coleccion.has(key)) {
                 coleccion.get(key)?.push(register);
             } else {
@@ -466,17 +462,17 @@ export const generateDataToFormat = async (): Promise<JSONInterfaceFormat> => {
             const desct = items[i]['Nombre de la Tela'];
             const color = items[i]['Color'];
             const refer = items[i]['Referencia Producto terminado'];
-            const canti = parseFloat(insumosData[key][i]['Cantidad']);
+            const canti = parseFloat(items[i]['Cantidad']);
             let register = new SiigoFormat(
                 1405053100,
-                'C,',
+                'C',
                 desct,
                 canti,
                 1,
                 "100"
             );
-            //register.setColor(getCodesByName(color,''));// corregir la funcion o acomodar el input para que lea solo el archivo de COLORES
-            //register.setCodigoBodega(taler); // hacer el acople o acomode para que lea el archivo de talleres
+            register.setCodigosSiigo(desct, 'Códigos Telas');
+            register.setColor(color);
             if (coleccion.has(key)) {
                 coleccion.get(key)?.push(register);
             } else {
@@ -484,19 +480,161 @@ export const generateDataToFormat = async (): Promise<JSONInterfaceFormat> => {
             }
         }
     }
-
-    return data;
+    const JSONDATA = JSON.stringify(Object.fromEntries(coleccion));
+    fs.writeFileSync(`uploads/dataFormat.json`, JSONDATA);
+    return `uploads/dataFormat.json`;
 }
 
-export const getCodesByName = (description: string, type: string) => {
-    let linea_producto: number, grupo_producto: number, codigo_producto: number;
+const doExcelStyleSiigo = (worksheet: ExcelJS.Worksheet) => {
+    const today = new Date();
+    const tomorrow = new Date(today.getTime() + (24*60*60*1000));
 
-    const aaaa = type === 'insumo' ? 'uploads/insumos_siigo.json' : type === 'tela' ? 'uploads/Telas_Siigo.json' : 'uploads/Producto Terminado SIIGO.json';
-    const eeee = JSON.parse(fs.readFileSync(aaaa, 'utf-8'));
-    let values = getSiigoCode(description, eeee, false);
-    linea_producto = values !== undefined ? parseInt(values[0]) : 0;
-    grupo_producto = values !== undefined ? parseInt(values[1]) : 0;
-    codigo_producto = values !== undefined ? parseInt(values[2]) : 0;
+    const day = today.getDate();
+    const monthIndex = today.getMonth();
+    const monthAbbreviations = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+    const monthAbbreviation = monthAbbreviations[monthIndex];
+    const year = today.getFullYear();
+    const formattedDate = `${monthAbbreviation} ${day}/${year}`;
 
-    return {linea_producto, grupo_producto, codigo_producto, credito: 'C'};
+    const day_tomo = tomorrow.getDate();
+    const monthIndex_tomo = tomorrow.getMonth();
+    const monthAbbreviation_tomo = monthAbbreviations[monthIndex_tomo];
+    const year_tomo = today.getFullYear();
+    const formattedDate_tomo = `${monthAbbreviation_tomo} ${day_tomo}/${year_tomo}`;
+
+    const columns = [
+        'TIPO DE COMPROBANTE (OBLIGATORIO)',
+        'CÓDIGO COMPROBANTE  (OBLIGATORIO)',
+        'NÚMERO_DE_DOCUMENTO',
+        'CUENTA CONTABLE   (OBLIGATORIO)',
+        'DÉBITO O CRÉDITO (OBLIGATORIO)',
+        'VALOR DE LA SECUENCIA   (OBLIGATORIO)',
+        'AÑO DEL DOCUMENTO',
+        'MES DEL DOCUMENTO',
+        'DIA_DEL_DOCUMENTO',
+        'SECUENCIA',
+        'CENTRO DE COSTO',
+        'NIT',
+        'DESCRIPCIÓN DE LA SECUENCIA',
+        'LÍNEA PRODUCTO',
+        'GRUPO PRODUCTO',
+        'CÓDIGO PRODUCTO',
+        'CANTIDAD',
+        'CÓDIGO_DE_LA_BODEGA',
+        'CLASIFICACIÓN 1',
+        'CLASIFICACIÓN 2',
+    ];
+
+    worksheet.addRow({});
+
+    worksheet.duplicateRow(1, 3, true);
+
+    worksheet.mergeCells('A1:T1');
+    worksheet.mergeCells('A2:T2');
+    worksheet.mergeCells('A3:T3');
+    worksheet.mergeCells('A4:T4');
+
+    worksheet.getRow(1).getCell(1).value = ' LIDER & CO SAS';
+    worksheet.getRow(1).getCell(1).border = {bottom: {style: 'medium'}, right: {style: 'medium'}};
+    worksheet.getRow(1).getCell(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: {argb: '99CCFF'},
+    };
+
+    worksheet.getRow(2).getCell(1).value = 'MODELO PARA LA IMPORTACION DE MOVIMIENTO CONTABLE - MODELO GENERAL';
+    worksheet.getRow(2).getCell(1).border = {bottom: {style: 'medium'}, right: {style: 'medium'}};
+    worksheet.getRow(2).getCell(1).alignment = {horizontal: 'center' };
+    worksheet.getRow(2).getCell(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: {argb: '99CCFF'}
+    };
+    
+    worksheet.getRow(3).getCell(1).value = `De: ${formattedDate} A: ${formattedDate_tomo}`;
+    worksheet.getRow(3).getCell(1).border = {bottom: {style: 'medium'}, right: {style: 'medium'}};
+    worksheet.getRow(3).getCell(1).alignment = {horizontal: 'center' };
+    worksheet.getRow(3).getCell(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: {argb: '99CCFF'}
+    };
+
+    worksheet.getRow(4).getCell(1).value = '';
+    worksheet.getRow(4).getCell(1).border = {bottom: {style: 'medium'}, right: {style: 'medium'}};
+    worksheet.getRow(4).getCell(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: {argb: 'FFFFFF'}
+    };
+
+    worksheet.insertRow(5, columns, 'i');
+    worksheet.getRow(5).eachCell((cell: Cell, colNumber: number) => {
+        cell.border = {bottom: {style: 'medium'}, right: {style: 'medium'}};
+        cell.value = columns[colNumber-1];
+        cell.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: {argb: 'FFFFFF'}
+        };
+    })
+    return worksheet;
+}
+
+export const generateDataToFormat = async (filename: string) => {
+    const workbook = new ExcelJS.Workbook();
+    let worksheet = workbook.addWorksheet();
+    const pathData = doDataToFormat();
+    const data: JSONInterfaceFormat = JSON.parse(fs.readFileSync(pathData, 'utf-8'));
+    worksheet = doExcelStyleSiigo(worksheet);
+
+    let i = 1;
+    for (const key in data) {
+        let orden_i = data[key];
+        for (let j = 0; j < orden_i.length; j++) {
+            worksheet.addRow([
+                orden_i[j].TIPO_DE_COMPROBANTE,
+                orden_i[j].CODIGO_COMPROBANTE,
+                i,
+                orden_i[j].CUENTA_CONTABLE,
+                orden_i[j].DEBITO_O_CREDITO,
+                orden_i[j].VALOR_DE_LA_SECUENCIA,
+                orden_i[j].ANNO_DEL_DOCUMENTO,
+                orden_i[j].MES_DEL_DOCUMENTO,
+                orden_i[j].DIA_DEL_DOCUMENTO,
+                j + 1,
+                orden_i[j].CENTRO_DE_COSTO,
+                orden_i[j].NIT,
+                orden_i[j].DESCRIPCION_DE_LA_SECUENCIA,
+                orden_i[j].LINEA_PRODUCTO,
+                orden_i[j].GRUPO_PRODUCTO,
+                orden_i[j].CODIGO_PRODUCTO,
+                orden_i[j].CANTIDAD,
+                orden_i[j].CODIGO_DE_LA_BODEGA,
+                orden_i[j].CLASIFICACION_1,
+                orden_i[j].CLASIFICACION_2,
+            ], 'i');
+        }
+        i = i + 1;
+    }
+    const name = `uploads/${filename}.xlsx`
+    await workbook.xlsx.writeFile(name);
+    return name;
+}
+
+interface ResponseCodesByName {
+    linea_producto: string;
+    grupo_producto: string;
+    codigo_producto: string;
+}
+export const getCodesByName = (description: string, type: string): ResponseCodesByName => {
+    let linea_producto: string, grupo_producto: string, codigo_producto: string;
+
+    const tablaEqui: JSONEquivalencia = JSON.parse(fs.readFileSync('uploads/equivalencias.json', 'utf-8'));
+    let values = tablaEqui[type][description];
+    linea_producto = values !== undefined ? values[0] : '0';
+    grupo_producto = values !== undefined ? values[1] : '0';
+    codigo_producto = values !== undefined ? values[2] : '0';
+
+    return {linea_producto, grupo_producto, codigo_producto};
 }

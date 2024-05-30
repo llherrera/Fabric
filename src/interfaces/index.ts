@@ -1,7 +1,6 @@
 import { SiigoFormat } from './siigoFormat.ts';
 
 export * from './siigoFormat.ts';
-export * from './Insumos.ts';
 
 export interface JSONInterface {
     [key:string]: string[];
@@ -16,5 +15,5 @@ export interface JSONInterfaceExcel {
 }
 
 export interface JSONInterfaceFormat {
-    [key:string]: SiigoFormat
+    [key:string]: SiigoFormat[]
 }

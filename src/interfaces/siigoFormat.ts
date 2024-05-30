@@ -77,14 +77,11 @@ export class SiigoFormat {
         this.CLASIFICACION_2 = '0';
     }
 
-    generarDebitos() {}
-
-    setCodigosSiigo(description: string, type: string) {
-        const { linea_producto, grupo_producto, codigo_producto, credito} = getCodesByName(description, type);
-        this.LINEA_PRODUCTO = linea_producto;
-        this.GRUPO_PRODUCTO = grupo_producto;
-        this.CODIGO_PRODUCTO = codigo_producto;
-        this.DEBITO_O_CREDITO = credito;
+    setCodigosSiigo(desct: string, type: string) {
+        const {linea_producto, grupo_producto, codigo_producto} = getCodesByName(desct, type);
+        this.LINEA_PRODUCTO = parseInt(linea_producto);
+        this.GRUPO_PRODUCTO = parseInt(grupo_producto);
+        this.CODIGO_PRODUCTO = parseInt(codigo_producto);
     }
 
     // Setters & Getters
@@ -133,7 +130,7 @@ export class SiigoFormat {
     setColor(value: string) {
         const pathfile = 'uploads/COLORES.json';
         const code = getCategoryCode(value, pathfile);
-        this.CLASIFICACION_2 = code[0];
+        this.CLASIFICACION_2 = code[0] === '' ? '0' : code[0];
     }
 
 
