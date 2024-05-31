@@ -17,3 +17,13 @@ export interface JSONInterfaceExcel {
 export interface JSONInterfaceFormat {
     [key:string]: SiigoFormat[]
 }
+
+export interface JSONEquivalencia {
+    [key: string]: JSONInterface;
+}
+
+export interface ResponseCodesByName {
+    linea_producto: string;
+    grupo_producto: string;
+    codigo_producto: string;
+}

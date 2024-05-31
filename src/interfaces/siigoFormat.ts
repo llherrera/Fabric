@@ -1,6 +1,4 @@
-import { validateLength, validateDecimals, validateNIT, validateCode, validateLetter, getCodesByName, getCategoryCode } from "../utils/functions.utils.ts";
-import { ErrorMessages } from "src/utils/constants.ts";
-import { JSONInterfaceExcel } from "./index.ts";
+import { getCodesByName, getCategoryCode } from "../utils/functions.utils.ts";
 
 /*
 TIPO_DE_COMPROBANTE: string;         // len 1 (F, G o P)
@@ -71,7 +69,7 @@ export class SiigoFormat {
         this.LINEA_PRODUCTO = 0;
         this.GRUPO_PRODUCTO = 0;
         this.CODIGO_PRODUCTO = 0;
-        this.CANTIDAD = CANTIDAD;
+        this.CANTIDAD = CANTIDAD ?? 0;
         this.CODIGO_DE_LA_BODEGA = CODIGO_DE_LA_BODEGA;
         this.CLASIFICACION_1 = CLASIFICACION_1;
         this.CLASIFICACION_2 = '0';
@@ -79,9 +77,9 @@ export class SiigoFormat {
 
     setCodigosSiigo(desct: string, type: string) {
         const {linea_producto, grupo_producto, codigo_producto} = getCodesByName(desct, type);
-        this.LINEA_PRODUCTO = parseInt(linea_producto);
-        this.GRUPO_PRODUCTO = parseInt(grupo_producto);
-        this.CODIGO_PRODUCTO = parseInt(codigo_producto);
+        this.LINEA_PRODUCTO = type === 'Códigos Terminados' ? 2 : parseInt(linea_producto);
+        this.GRUPO_PRODUCTO = parseInt(grupo_producto === '' ? '0' : grupo_producto);
+        this.CODIGO_PRODUCTO = parseInt(codigo_producto === '' ? '0' : codigo_producto);
     }
 
     // Setters & Getters
@@ -119,18 +117,22 @@ export class SiigoFormat {
 
     setCantidad(value: number) {this.CANTIDAD = value;}
 
-    setCodigoBodega(value: number) {
+    setCodigoBodega(value: string) {
         const pathfile = 'uploads/BODEGAS.json';
         const code = getCategoryCode(value.toString(), pathfile);
-        this.CODIGO_DE_LA_BODEGA = parseInt(code[0]);
+        this.CODIGO_DE_LA_BODEGA = parseInt(code);
     }
 
-    setTalla(value: string) {this.CLASIFICACION_1 = value;}
+    setTalla(value: string) {
+        const pathfile = 'uploads/TALLA.json';
+        const code = getCategoryCode(value.toString(), pathfile);
+        this.CLASIFICACION_1 = code;
+    }
 
     setColor(value: string) {
         const pathfile = 'uploads/COLORES.json';
         const code = getCategoryCode(value, pathfile);
-        this.CLASIFICACION_2 = code[0] === '' ? '0' : code[0];
+        this.CLASIFICACION_2 = code;
     }
 
 

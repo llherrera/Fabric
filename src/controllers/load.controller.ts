@@ -2,12 +2,6 @@ import { Request, Response } from "express";
 import * as funct from "../utils/functions.utils.ts";
 import path from "path";
 
-export const someName = async (req: Request, res: Response) => {
-    const { path_file } = req.body
-    await funct.testExcel(path_file);
-    res.json({msg: 'File uploaded'});
-}
-
 export const generateInsumosSiigoFile = async (req: Request, res: Response) => {
     const { path_file } = req.body
     await funct.readFileToGenerateJsonFile(path_file, 1, 0, 4);
