@@ -32,7 +32,7 @@ export const validateLetter = (value: string, values: string[]) => {
     path:  la ruta del fichero xlsx de donde se obtiene la información para el JSON
     row_:  es la fila desde donde comienza los datos en el xlsx
     sheet: es la hoja de donde se quiere sacar la información del xlsx, por defecto es la hoja 0 que es la primera
-    key:   es la columna que se quiere usar como identificador de los valores en cada fila, por defecto es 0
+    key:   es la columna que se quiere usar como identificador de los valores en cada fila, por defecto es 1
     
     la salida de esta función genera un fichero JSON
     SIIGO
@@ -50,7 +50,7 @@ export const validateLetter = (value: string, values: string[]) => {
     Colores: la key es la descripción y el value es un array de 1 elemento (codigo_siigo)
     Bodegas: la key es el nombre y el value es un array de 1 elemento (codigo_siigo)
 */
-export const readFileToGenerateJsonFile = async (path: string, row_: number, sheet: number = 0, key: number = 0) => {
+export const readFileToGenerateJsonFile = async (path: string, row_: number, sheet: number = 0, key: number = 1) => {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(path);
     const worksheet = workbook.worksheets[sheet];
@@ -87,7 +87,16 @@ export const readFileToGenerateJsonFile = async (path: string, row_: number, she
     fs.unlinkSync(path);
 }
 
-export const readInputFile = async (path: string, filename: string, rowStart: number) => {
+/*
+    path:     la ruta del fichero xlsx de donde se obtiene la información para el JSON
+    filename: nombre que recibe el fichero
+    rowStart: define la fila donde están los encabezados o titulos de las columnas, idealmente es 1 pero hay casos donde varia
+    key:      es la columna donde se ubican las ordenes de producción, por defecto es 1
+    
+    la salida de esta función genera un fichero JSON donde se agrupan las ordenes de producción,
+    la fila donde están los encabezados de las columnas será el key y el valor el valor de la celda
+*/
+export const readInputFile = async (path: string, filename: string, rowStart: number = 1, key: number = 1) => {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(path);
     const worksheet = workbook.worksheets[0];
@@ -97,21 +106,21 @@ export const readInputFile = async (path: string, filename: string, rowStart: nu
         if (rowNumber > rowStart) {
             let rowData: JSONInterfaceData = {};
 
-            let fieldName = worksheet.getRow(rowNumber).getCell(2).value?.toString() ?? `EMPTY_${2}`;
+            let fieldName = worksheet.getRow(rowNumber).getCell(key).value?.toString() ?? `EMPTY_${key}`;
             fieldName = fieldName.replace(/  +/g, "");
             fieldName = fieldName.replace(/ +$/, "");
 
             row.eachCell((cell: Cell, colNumber: number) => {
-                if (colNumber != 2) {
+                if (colNumber != key) {
                     let value = (cell.value?.toString() ?? 'Vacio').replace(/ +$/g, "");
-                    let valueName = worksheet.getRow(rowStart).getCell(colNumber).value?.toString() ?? `EMPTY_${2}`;
+                    let valueName = worksheet.getRow(rowStart).getCell(colNumber).value?.toString() ?? `EMPTY_${key}`;
                     rowData[valueName] = value;
                 }
             });
             jsonData[fieldName] = [...jsonData[fieldName]??[], rowData];
         }
     });
-    fs.writeFileSync(`./uploads/${filename}.json`, JSON.stringify(jsonData));
+    fs.writeFileSync(`uploads/${filename}.json`, JSON.stringify(jsonData));
     fs.unlinkSync(path);
 }
 
@@ -208,6 +217,7 @@ const getSiigoCode = (key_lider: string, file_siigo: JSONInterface, isCode: bool
     let maxKey = '';
     for (const key in file_siigo) {
         let key_ = isCode ? file_siigo[key][3] : key;
+        key_ = key_.replace('TALLA ', "");
         let assertion = isCode ? 0.999 : 0.65;
         let valueCoef = diceCoefficient(key_, key_field);
         if (valueCoef > assertion) {
@@ -244,8 +254,11 @@ const doDataToFormat = () => {
             register.setCodigosSiigo(desct, 'Códigos Insumos');
             register.setColor(color);
             if (coleccion.has(key)) {
+                const secuencia = coleccion.get(key)?.length;
+                register.setSecuencia(secuencia! + 1);
                 coleccion.get(key)?.push(register);
             } else {
+                register.setSecuencia(1);
                 coleccion.set(key, [register]);
             }
         }
@@ -268,8 +281,11 @@ const doDataToFormat = () => {
             register.setCodigosSiigo(desct, 'Códigos Telas');
             register.setColor(color);
             if (coleccion.has(key)) {
+                const secuencia = coleccion.get(key)?.length;
+                register.setSecuencia(secuencia! + 1);
                 coleccion.get(key)?.push(register);
             } else {
+                register.setSecuencia(1);
                 coleccion.set(key, [register]);
             }
         }
@@ -377,25 +393,50 @@ const doExcelStyleSiigo = (worksheet: ExcelJS.Worksheet) => {
 
 const doDebit = () => {
     const data: JSONInterfaceFormat = JSON.parse(fs.readFileSync('uploads/dataFormat.json', 'utf-8'));
+    const tallas: JSONInterfaceExcel = JSON.parse(fs.readFileSync('uploads/productosTallas.json', 'utf-8'));
+    const refColor: JSONInterfaceData = JSON.parse(fs.readFileSync('uploads/Producto terminado Líder.json', 'utf-8'));
     for (const op in data) {
-        //rutina para el manejo y discriminación por tallas de los debitos
-        let cantidad = 0; //es parte de la discriminación
-        //hacer getTalla o setTalla en el clase para tener el código de Siigo de la talla
-        let talla = 35;
-        const ref: string = getPropertyFormatByOP(op, 'ref');
-        const taller: string = getPropertyFormatByOP(op, 'taller');
-        let register = new SiigoFormat(
-            1410053100,
-            'D',
-            `OP${op}`,
-            cantidad,
-            0,
-            '100'
-        );
-        register.setCodigosSiigo(ref, 'Códigos Terminados');
-        register.setCodigoBodega(taller);
-        register.setTalla(talla.toString());
-        data[op].push(register);
+        const tallasOp = tallas[op];
+        const secuencia = data[op].length + 1;
+        if (tallasOp) {
+            for (let i = 0; i < tallasOp.length; i++) { 
+                // tomar de cada talla la cantidad, c_razon_social y c_id_talla (la cantidad se escribe tal cual, la bodega hay que buscar el codigo y la talla tambien)
+                const item = tallasOp[i];
+                let cantidad = parseFloat(item['cant_asignada']);
+                let register = new SiigoFormat(
+                    1410053100,
+                    'D',
+                    `OP${op}`,
+                    cantidad,
+                    0,
+                    '100'
+                );
+                const ref = item['referencia_antigua'];
+                register.setSecuencia(secuencia);
+                register.setCodigosSiigo(ref, 'Códigos Terminados');
+                register.setCodigoBodega(item['c_razon_social']);
+                register.setTalla(item['c_id_talla']);
+                register.setColor(refColor[ref][0]);
+                data[op].push(register);
+            }
+        } else {
+            let cantidad = 0;
+            let talla = 35;
+            const ref: string = getPropertyFormatByOP(op, 'ref');
+            const taller: string = getPropertyFormatByOP(op, 'taller');
+            let register = new SiigoFormat(
+                1410053100,
+                'D',
+                `OP${op}`,
+                cantidad,
+                0,
+                '100'
+            );
+            register.setCodigosSiigo(ref, 'Códigos Terminados');
+            register.setCodigoBodega(taller);
+            register.setTalla(talla.toString());
+            data[op].push(register);
+        }
     }
     const JSONDATA = JSON.stringify(data);
     fs.writeFileSync(`uploads/dataFormat.json`, JSONDATA);
@@ -434,10 +475,10 @@ export const generateDataToFormat = async (filename: string) => {
     pathData = doDebit();
     const data: JSONInterfaceFormat = JSON.parse(fs.readFileSync(pathData, 'utf-8'));
 
+    let worksheet = workbook.addWorksheet(`O1-i`);// añadir seleccionar OP
+    worksheet = doExcelStyleSiigo(worksheet);
     let i = 1;
     for (const key in data) {
-        let worksheet = workbook.addWorksheet(`O1-${i}`);
-        worksheet = doExcelStyleSiigo(worksheet);
         let orden_i = data[key];
         for (let j = 0; j < orden_i.length; j++) {
             const row = worksheet.addRow([
@@ -450,7 +491,7 @@ export const generateDataToFormat = async (filename: string) => {
                 orden_i[j].ANNO_DEL_DOCUMENTO,
                 orden_i[j].MES_DEL_DOCUMENTO,
                 orden_i[j].DIA_DEL_DOCUMENTO,
-                j + 1,
+                orden_i[j].SECUENCIA,
                 orden_i[j].CENTRO_DE_COSTO,
                 orden_i[j].NIT,
                 orden_i[j].DESCRIPCION_DE_LA_SECUENCIA,

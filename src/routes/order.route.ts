@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { setOrderInsumos, setOrderTelas, setOrderTerminados, generateSiigoFormat } from '../controllers/order.controller.ts';
+import { setOrderInsumos, setOrderTelas, setOrderTerminados, setOrderTallas, generateSiigoFormat } from '../controllers/order.controller.ts';
 import { fileManager } from '../middleware/index.ts';
 import { Path } from '../utils/constants.ts';
 
@@ -10,6 +10,7 @@ const {  } = Path;
 router.get('/', generateSiigoFormat);
 
 router.post('/insumos', fileManager, setOrderInsumos);
+router.post('/tallas', fileManager, setOrderTallas);
 router.post('/telas', fileManager, setOrderTelas);
 
 
