@@ -76,7 +76,7 @@ export class SiigoFormat {
     }
     setCodigosSiigo(desct: string, type: string) {
         const {linea_producto, grupo_producto, codigo_producto} = getCodesByName(desct, type);
-        this.LINEA_PRODUCTO = type === 'Códigos Terminados' ? 2 : parseInt(linea_producto);
+        this.LINEA_PRODUCTO = type === 'Códigos Terminados' ? 2 : parseInt(linea_producto === '' ? '0' : linea_producto);
         this.GRUPO_PRODUCTO = parseInt(grupo_producto === '' ? '0' : grupo_producto);
         this.CODIGO_PRODUCTO = parseInt(codigo_producto === '' ? '0' : codigo_producto);
     }

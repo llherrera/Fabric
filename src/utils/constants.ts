@@ -101,3 +101,22 @@ export const ErrorMessages = {
         numeroEstablecimiento: 'El tipo de comprobante tiene que ser de longitud 1',
     }
 }
+
+export const FILES_NAME = {
+    Bodegas: 'bodegas',
+    Colores: 'colores',
+    Tallas: 'tallas',
+    LiderProds: 'productos_lider',
+    SiigoProds: 'productos_siigo',
+    LiderTelas: 'telas_lider',
+    SiigoTelas: 'telas_siigo',
+    LiderInsum: 'insumos_lider',
+    SiigoInsum: 'insumos_siigo',
+
+    CodesNameInsum: 'Códigos Insumos',
+    CodesNameTelas: 'Códigos Telas',
+    CodesNameProds: 'Códigos Terminados',
+    CodesNameTalla: 'Códigos Tallas',
+    CodesNamecolor: 'Códigos Colores',
+    CodesNameBodeg: 'Códigos Bodegas',
+}

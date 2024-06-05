@@ -22,7 +22,8 @@ router.post('/colores', fileManager, controller.generateColoresFile);
 router.post('/bodegas', fileManager, controller.generatebodegasFile);
 
 //cambiar para que solo sea para obtener el fichero y no crearlo en el proceso
-router.post('/equivalencias', fileManager, controller.getEquivalencesTable); // renombrar la función para que no sea confusa
+router.post('/equivalencias', fileManager, controller.getEquivalencesTable);
+router.get('/equivalencias', controller.generateTable);
 
 
 export { router as LoadRouter };

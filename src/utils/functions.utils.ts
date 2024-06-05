@@ -50,7 +50,7 @@ export const validateLetter = (value: string, values: string[]) => {
     Colores: la key es la descripción y el value es un array de 1 elemento (codigo_siigo)
     Bodegas: la key es el nombre y el value es un array de 1 elemento (codigo_siigo)
 */
-export const readFileToGenerateJsonFile = async (path: string, row_: number, sheet: number = 0, key: number = 1) => {
+export const readFileToGenerateJsonFile = async (path: string, row_: number, sheet: number = 0, key: number = 1, filename: string = 'filename') => {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(path);
     const worksheet = workbook.worksheets[sheet];
@@ -71,9 +71,7 @@ export const readFileToGenerateJsonFile = async (path: string, row_: number, she
                 if (colNumber !== key) {
                     let fieldName = worksheet.getRow(rowNumber).getCell(key).value?.toString() ?? `EMPTY_${key}`;
                     fieldName = fieldName.replace(/  +/g, "");
-                    //fieldName = fieldName.replace(/[0-9]{1,4} ?(- ?[0-9]{1,4}){1,2} ?/g, "");
                     fieldName = fieldName.replace(/ +$/, "");
-                    //const value = (cell.value?.toString() ?? 'BLANCO').replace(/  +/g, "");
                     let value = (cell.value?.toString() ?? '').replace(/ +$/g, "");
                     value = value === '[object Object]' ? `${temp[colNumber-3]}-${temp[colNumber-2]}` : value;
                     temp.push(value);
@@ -83,7 +81,7 @@ export const readFileToGenerateJsonFile = async (path: string, row_: number, she
             jsonData = { ...jsonData,...rowData};
         }
     });
-    fs.writeFileSync(`./uploads/${worksheet.name}.json`, JSON.stringify(jsonData));
+    fs.writeFileSync(`./uploads/${filename}.json`, JSON.stringify(jsonData));
     fs.unlinkSync(path);
 }
 
@@ -203,6 +201,73 @@ export const doMatchColorInFile = async (path: string, filename: string) => {
     return name;
 }
 
+export const generateEquivalentTable = async (filename: string) => {
+    const workbook = new ExcelJS.Workbook();
+    const data: JSONEquivalencia = JSON.parse(fs.readFileSync('uploads/equivalencias.json', 'utf-8'));
+    for (const section in data) {
+        const seccion = data[section];
+        let sheet = workbook.addWorksheet(section);
+        let i = 0;
+        for (const key in seccion) {
+            const temp = seccion[key];
+            if (i === 0) {
+                temp.length === 3 ?
+                    sheet.columns = [
+                        {header: 'Referencia', width: 50},
+                        {header: 'Línea producto', width: 20},
+                        {header: 'Grupo producto', width: 20},
+                        {header: 'Código producto', width: 20}
+                    ]
+                    : sheet.columns = [
+                        {header: 'Descripción', width: 50},
+                        {header: 'Código Siigo', width: 20}
+                    ];
+            }
+            sheet.getRow(1).fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: '99CCFF' },
+            };
+            temp.length === 3 ?
+                sheet.addRow([key, ...temp]) 
+                : sheet.addRow([key, temp[0]]);
+            i = i + 1;
+        }
+    }
+    const name = `uploads/${filename}.xlsx`;
+    await workbook.xlsx.writeFile(name);
+    return name;
+}
+
+export const addEquivalent = (lider_path: string, siigo_path: string, name: string, code: boolean) => {
+    const lider = JSON.parse(fs.readFileSync(lider_path, 'utf-8'));
+    const siigo = JSON.parse(fs.readFileSync(siigo_path, 'utf-8'));
+    let data: JSONEquivalencia = {};
+    try {
+        data = JSON.parse(fs.readFileSync('uploads/equivalencias.json', 'utf-8'));
+    } catch (error) {
+        data = {};
+    }
+    let temp: JSONInterface = {};
+
+    for (const key_lider in lider)
+        temp[key_lider] = getSiigoCode(key_lider, siigo, code)
+    data[name] = temp;
+    fs.writeFileSync(`uploads/equivalencias.json`, JSON.stringify(data));
+}
+
+export const addCatalogue = (cat_path: string, name: string) => {
+    const cat = JSON.parse(fs.readFileSync(cat_path, 'utf-8'));
+    let data: JSONEquivalencia = {};
+    try {
+        data = JSON.parse(fs.readFileSync('uploads/equivalencias.json', 'utf-8'));
+    } catch (error) {
+        data = {};
+    }
+    data[name] = cat;
+    fs.writeFileSync(`uploads/equivalencias.json`, JSON.stringify(data));
+}
+
 export const getCategoryCode = (value: string, path: string) => {
     const productos = JSON.parse(fs.readFileSync(path, 'utf-8'));
     let values = getSiigoCode(value, productos, false);
@@ -217,7 +282,7 @@ const getSiigoCode = (key_lider: string, file_siigo: JSONInterface, isCode: bool
     let maxKey = '';
     for (const key in file_siigo) {
         let key_ = isCode ? file_siigo[key][3] : key;
-        key_ = key_.replace('TALLA ', "");
+        // key_ = key_.replace('TALLA ', "");
         let assertion = isCode ? 0.999 : 0.65;
         let valueCoef = diceCoefficient(key_, key_field);
         if (valueCoef > assertion) {
@@ -400,7 +465,6 @@ const doDebit = () => {
         const secuencia = data[op].length + 1;
         if (tallasOp) {
             for (let i = 0; i < tallasOp.length; i++) { 
-                // tomar de cada talla la cantidad, c_razon_social y c_id_talla (la cantidad se escribe tal cual, la bodega hay que buscar el codigo y la talla tambien)
                 const item = tallasOp[i];
                 let cantidad = parseFloat(item['cant_asignada']);
                 let register = new SiigoFormat(
@@ -432,6 +496,7 @@ const doDebit = () => {
                 0,
                 '100'
             );
+            register.setSecuencia(secuencia);
             register.setCodigosSiigo(ref, 'Códigos Terminados');
             register.setCodigoBodega(taller);
             register.setTalla(talla.toString());
@@ -469,45 +534,47 @@ const getPropertyFormatByOP = (op: string, property: string) => {
     return '';
 }
 
-export const generateDataToFormat = async (filename: string) => {
+export const generateDataToFormat = async (filename: string, orders: string[], docNumber: number) => {
     const workbook = new ExcelJS.Workbook();
     let pathData = doDataToFormat();
     pathData = doDebit();
     const data: JSONInterfaceFormat = JSON.parse(fs.readFileSync(pathData, 'utf-8'));
 
-    let worksheet = workbook.addWorksheet(`O1-i`);// añadir seleccionar OP
+    let worksheet = workbook.addWorksheet(`O1-i`);
     worksheet = doExcelStyleSiigo(worksheet);
-    let i = 1;
+    let i = docNumber;
     for (const key in data) {
-        let orden_i = data[key];
-        for (let j = 0; j < orden_i.length; j++) {
-            const row = worksheet.addRow([
-                orden_i[j].TIPO_DE_COMPROBANTE,
-                orden_i[j].CODIGO_COMPROBANTE,
-                i,
-                orden_i[j].CUENTA_CONTABLE,
-                orden_i[j].DEBITO_O_CREDITO,
-                orden_i[j].VALOR_DE_LA_SECUENCIA,
-                orden_i[j].ANNO_DEL_DOCUMENTO,
-                orden_i[j].MES_DEL_DOCUMENTO,
-                orden_i[j].DIA_DEL_DOCUMENTO,
-                orden_i[j].SECUENCIA,
-                orden_i[j].CENTRO_DE_COSTO,
-                orden_i[j].NIT,
-                orden_i[j].DESCRIPCION_DE_LA_SECUENCIA,
-                orden_i[j].LINEA_PRODUCTO,
-                orden_i[j].GRUPO_PRODUCTO,
-                orden_i[j].CODIGO_PRODUCTO,
-                orden_i[j].CANTIDAD,
-                orden_i[j].CODIGO_DE_LA_BODEGA,
-                orden_i[j].CLASIFICACION_1,
-                orden_i[j].CLASIFICACION_2,
-            ]);
-            row.eachCell({includeEmpty: true}, (cell: Cell) => {
-                cell.border = {bottom: {style: 'thin'}, right: {style: 'thin'}};
-            });
+        if (orders.length === 0 || orders.includes(key)) {
+            let orden_i = data[key];
+            for (let j = 0; j < orden_i.length; j++) {
+                const row = worksheet.addRow([
+                    orden_i[j].TIPO_DE_COMPROBANTE,
+                    orden_i[j].CODIGO_COMPROBANTE,
+                    i,
+                    orden_i[j].CUENTA_CONTABLE,
+                    orden_i[j].DEBITO_O_CREDITO,
+                    orden_i[j].VALOR_DE_LA_SECUENCIA,
+                    orden_i[j].ANNO_DEL_DOCUMENTO,
+                    orden_i[j].MES_DEL_DOCUMENTO,
+                    orden_i[j].DIA_DEL_DOCUMENTO,
+                    orden_i[j].SECUENCIA,
+                    orden_i[j].CENTRO_DE_COSTO,
+                    orden_i[j].NIT,
+                    orden_i[j].DESCRIPCION_DE_LA_SECUENCIA,
+                    orden_i[j].LINEA_PRODUCTO,
+                    orden_i[j].GRUPO_PRODUCTO,
+                    orden_i[j].CODIGO_PRODUCTO,
+                    orden_i[j].CANTIDAD,
+                    orden_i[j].CODIGO_DE_LA_BODEGA,
+                    orden_i[j].CLASIFICACION_1,
+                    orden_i[j].CLASIFICACION_2,
+                ]);
+                row.eachCell({includeEmpty: true}, (cell: Cell) => {
+                    cell.border = {bottom: {style: 'thin'}, right: {style: 'thin'}};
+                });
+            }
+            i = i + 1;
         }
-        i = i + 1;
     }
     const name = `uploads/${filename}.xlsx`
     await workbook.xlsx.writeFile(name);

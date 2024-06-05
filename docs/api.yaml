@@ -423,6 +423,50 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información necesaria para la tabla de equivalencias desde un solo archivo
+      description: Permite subir la información de los codigos y descripciones en la que se relacionan los insumos, telas y productos con el código de Siigo por medio de Excel al sistema
+      operationId: loadEquivalencias
+      responses:
+        '200':
+          description: Tabla de equivalencias creada con exito
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
   /orden:
     get:
       tags:
