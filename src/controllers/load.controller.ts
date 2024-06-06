@@ -11,9 +11,9 @@ export const generateInsumosSiigoFile = async (req: Request, res: Response) => {
         await funct.readFileToGenerateJsonFile(path_file, 1, 0, 4, FILES_NAME.SiigoInsum);
         msg = 'Se ha creado el fichero de insumos de Siigo';
         if (!fs.existsSync(`uploads/${FILES_NAME.LiderInsum}.json`))
-            return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de los insumos, falta crear el fichero de insumos de Lider`});
+            return res.status(201).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de los insumos, falta crear el fichero de insumos de Lider.`});
         funct.addEquivalent(`uploads/${FILES_NAME.LiderInsum}.json`, `uploads/${FILES_NAME.SiigoInsum}.json`, FILES_NAME.CodesNameInsum, false);
-        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         res.status(400).json({msg: error.message});
     }
@@ -26,9 +26,9 @@ export const generateInsumoLiderFile = async (req: Request, res: Response) => {
         await funct.readFileToGenerateJsonFile(path_file, 1, 1, 2, FILES_NAME.LiderInsum);
         msg = 'Se ha creado el fichero de insumos de Lider';
         if (!fs.existsSync(`uploads/${FILES_NAME.SiigoInsum}.json`))
-            return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de los insumos, falta crear el fichero de insumos de Siigo`});
+            return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de los insumos, falta crear el fichero de insumos de Siigo.`});
         funct.addEquivalent(`uploads/${FILES_NAME.LiderInsum}.json`, `uploads/${FILES_NAME.SiigoInsum}.json`, FILES_NAME.CodesNameInsum, false);
-        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         res.status(400).json({msg: error.message});
     }
@@ -41,7 +41,7 @@ export const generateTelasSiigoFile = async (req: Request, res: Response) => {
         await funct.readFileToGenerateJsonFile(path_file, 1, 2, 4, FILES_NAME.SiigoTelas);
         msg = 'Se ha creado el fichero de telas de Siigo';
         if (!fs.existsSync(`uploads/${FILES_NAME.SiigoTelas}.json`))
-            return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de las telas, falta crear el fichero de telas de Lider`});
+            return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de las telas, falta crear el fichero de telas de Lider.`});
         funct.addEquivalent(`uploads/${FILES_NAME.LiderTelas}.json`, `uploads/${FILES_NAME.SiigoTelas}.json`, FILES_NAME.CodesNameTelas, false);
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});
     } catch (error) {
@@ -56,9 +56,9 @@ export const generateTelasLiderFile = async (req: Request, res: Response) => {
         await funct.readFileToGenerateJsonFile(path_file, 1, 3, 1, FILES_NAME.LiderTelas);
         msg = 'Se ha creado el fichero de telas de Lider';
         if (!fs.existsSync(`uploads/${FILES_NAME.LiderTelas}.json`))
-            return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de las telas, falta crear el fichero de telas de Siigo`});
+            return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de las telas, falta crear el fichero de telas de Siigo.`});
         funct.addEquivalent(`uploads/${FILES_NAME.LiderTelas}.json`, `uploads/${FILES_NAME.SiigoTelas}.json`, FILES_NAME.CodesNameTelas, false);
-        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         res.status(400).json({msg: error.message});
     }
@@ -71,9 +71,9 @@ export const generateTerminadoSiigoFile = async (req: Request, res: Response) =>
         await funct.readFileToGenerateJsonFile(path_file, 1, 4, 5, FILES_NAME.SiigoProds);
         msg = 'Se ha creado el fichero de productos de Siigo';
         if (!fs.existsSync(`uploads/${FILES_NAME.LiderProds}.json`))
-            return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de los productos, falta crear el fichero de productos de Lider`});
+            return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de los productos, falta crear el fichero de productos de Lider.`});
         funct.addEquivalent(`uploads/${FILES_NAME.LiderProds}.json`, `uploads/${FILES_NAME.SiigoProds}.json`, FILES_NAME.CodesNameProds, true);
-        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         res.status(400).json({msg: error.message});
     }
@@ -86,9 +86,9 @@ export const generateTerminadoLiderFile = async (req: Request, res: Response) =>
         await funct.readFileToGenerateJsonFile(path_file, 1, 5, 1, FILES_NAME.LiderProds);
         msg = 'Se ha creado el fichero de productos de Lider';
         if (!fs.existsSync(`uploads/${FILES_NAME.SiigoProds}.json`))
-            return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de los productos, falta crear el fichero de productos de Siigo`});
+            return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de los productos, falta crear el fichero de productos de Siigo.`});
         funct.addEquivalent(`uploads/${FILES_NAME.LiderProds}.json`, `uploads/${FILES_NAME.SiigoProds}.json`, FILES_NAME.CodesNameProds, true);
-        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         res.status(400).json({msg: error.message});
     }
@@ -135,8 +135,18 @@ export const generatebodegasFile = async (req: Request, res: Response) => {
 
 export const getEquivalencesTable = async (req: Request, res: Response) => {
     const { path_file } = req.body;
-    const filename = 'Tabla de equivalencias';
+    const filename = 'Tabla-Equivalencias';
     const path_ = await funct.doMatchColorInFile(path_file, filename);
+    const realPath = path.resolve(path_);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment;filename=${filename}.xlsx`);
+    res.sendFile(realPath);
+}
+
+export const doCatalogueTable = async (req: Request, res: Response) => {
+    const { path_file } = req.body;
+    const filename = 'Tabla-Equivalencias';
+    const path_ = await funct.doCatalogueTable(path_file, filename);
     const realPath = path.resolve(path_);
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment;filename=${filename}.xlsx`);

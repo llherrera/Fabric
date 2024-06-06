@@ -18,373 +18,21 @@ tags:
     description: Rutas que permiten obtener el formato a subir en Siigo a partir de los datos de las ordenes de compra
 
 paths:
-  /cargar/insumos-siigo:
+  /cargar/codigos:
     post:
       tags:
         - Cargar
-      summary: Permite subir la información de los insumos según Siigo
-      description: Permite subir la información de los insumos en la que se relacionan los códigos de Siigo con los nombre de insumos por medio de Excel al sistema
-      operationId: loadInsumosSiigo
-      responses:
-        '204':
-          description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /cargar/telas-siigo:
-    post:
-      tags:
-        - Cargar
-      summary: Permite subir la información de las telas según Siigo
-      description: Permite subir la información de las telas en la que se relacionan los códigos de Siigo con los nombre de las telas por medio de Excel al sistema
-      operationId: loadTelasSiigo
-      responses:
-        '204':
-          description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /cargar/productos-siigo:
-    post:
-      tags:
-        - Cargar
-      summary: Permite subir la información de los productos según Siigo
-      description: Permite subir la información de los productos en la que se relacionan los códigos de Siigo con los nombre de los productos por medio de Excel al sistema
-      operationId: loadProductosSiigo
-      responses:
-        '204':
-          description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /cargar/insumos-lider:
-    post:
-      tags:
-        - Cargar
-      summary: Permite subir la información de los insumos según Lider
-      description: Permite subir la información de los insumos en la que se relacionan la descripción y color de los insumos en la base de datos de Lider por medio de Excel al sistema
-      operationId: loadInsumosLider
-      responses:
-        '204':
-          description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /cargar/telas-lider:
-    post:
-      tags:
-        - Cargar
-      summary: Permite subir la información de las telas según Lider
-      description: Permite subir la información de las telas en la que se relacionan la descripción y color de las telas en la base de datos de Lider por medio de Excel al sistema
-      operationId: loadTelasLider
-      responses:
-        '204':
-          description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /cargar/productos-lider:
-    post:
-      tags:
-        - Cargar
-      summary: Permite subir la información de los productos según Lider
-      description: Permite subir la información de los productos en la que se relacionan la referencia antigua y color de los productos en la base de datos de Lider por medio de Excel al sistema
-      operationId: loadProductosLider
-      responses:
-        '204':
-          description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /cargar/tallas:
-    post:
-      tags:
-        - Cargar
-      summary: Permite subir la información del catalogo de tallas de Lider
-      description: Permite subir la información del catalogo de tallas en la que se relacionan las tallas con el código de Siigo por medio de Excel al sistema
-      operationId: loadTallas
-      responses:
-        '204':
-          description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /cargar/colores:
-    post:
-      tags:
-        - Cargar
-      summary: Permite subir la información del catalogo de colores de Lider
-      description: Permite subir la información del catalogo de colores en la que se relacionan los colores con el código de Siigo por medio de Excel al sistema
-      operationId: loadColores
-      responses:
-        '204':
-          description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /cargar/bodegas:
-    post:
-      tags:
-        - Cargar
-      summary: Permite subir la información del catalogo de bodegas de Lider
-      description: Permite subir la información del catalogo de bodegas en la que se relacionan las bodegas con el código de Siigo por medio de Excel al sistema
-      operationId: loadBodegas
-      responses:
-        '204':
-          description: OK
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /cargar/equivalencias:
-    get:
-      tags:
-        - Cargar
-      summary: Permite obtener la tabla de equivalencias
-      description: Permite obtener la tabla de equivalencias en la que relacionan los nombres de los insumos, telas, productos y su respectivo con los códigos de Siigo
-      operationId: equivalencias
+      summary: Permite subir la información necesaria para la tabla de equivalencias desde un solo archivo
+      description: Permite subir la información de los codigos y descripciones en la que se relacionan los insumos, telas y productos con el código de Siigo por medio de Excel al sistema
+      operationId: loadEquivalencias
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
       responses:
         '200':
           description: Tabla de equivalencias creada con exito
@@ -423,12 +71,585 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
+  /cargar/catalogo:
     post:
       tags:
         - Cargar
       summary: Permite subir la información necesaria para la tabla de equivalencias desde un solo archivo
-      description: Permite subir la información de los codigos y descripciones en la que se relacionan los insumos, telas y productos con el código de Siigo por medio de Excel al sistema
-      operationId: loadEquivalencias
+      description: Permite subir la información de los codigos y descripciones en la que se relacionan los colores, tallas y bodegas con el código de Siigo por medio de Excel al sistema
+      operationId: loadCatalogueEquivalencias
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Tabla de equivalencias creada con exito
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/insumos-siigo:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los insumos según Siigo.
+      description: Permite subir la información de los insumos en la que se relacionan los códigos de Siigo con los nombre de insumos por medio de Excel al sistema.
+      operationId: loadInsumosSiigo
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de insumos de Siigo. Se ha actualizado la tabla de equivalencias.
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de insumos de Siigo. No se tiene la información necesaria para poder crear las equivalencias de los insumos, falta crear el fichero de insumos de Lider.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/telas-siigo:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de las telas según Siigo.
+      description: Permite subir la información de las telas en la que se relacionan los códigos de Siigo con los nombre de las telas por medio de Excel al sistema.
+      operationId: loadTelasSiigo
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de telas de Siigo. Se ha actualizado la tabla de equivalencias.
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de telas de Siigo. No se tiene la información necesaria para poder crear las equivalencias de las telas, falta crear el fichero de telas de Lider.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/productos-siigo:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los productos según Siigo.
+      description: Permite subir la información de los productos en la que se relacionan los códigos de Siigo con los nombre de los productos por medio de Excel al sistema.
+      operationId: loadProductosSiigo
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de productos de Siigo. Se ha actualizado la tabla de equivalencias.
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de productos de Siigo. No se tiene la información necesaria para poder crear las equivalencias de los productos, falta crear el fichero de productos de Lider.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/insumos-lider:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los insumos según Lider.
+      description: Permite subir la información de los insumos en la que se relacionan la descripción y color de los insumos en la base de datos de Lider por medio de Excel al sistema.
+      operationId: loadInsumosLider
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de insumos de Lider. Se ha actualizado la tabla de equivalencias.
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de insumos de Lider. No se tiene la información necesaria para poder crear las equivalencias de los insumos, falta crear el fichero de insumos de Siigo.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/telas-lider:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de las telas según Lider.
+      description: Permite subir la información de las telas en la que se relacionan la descripción y color de las telas en la base de datos de Lider por medio de Excel al sistema.
+      operationId: loadTelasLider
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de telas de Lider. Se ha actualizado la tabla de equivalencias.
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de telas de Lider. No se tiene la información necesaria para poder crear las equivalencias de las telas, falta crear el fichero de telas de Siigo.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/productos-lider:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los productos según Lider.
+      description: Permite subir la información de los productos en la que se relacionan la referencia antigua y color de los productos en la base de datos de Lider por medio de Excel al sistema.
+      operationId: loadProductosLider
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de productos de Lider. Se ha actualizado la tabla de equivalencias.
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de productos de Lider. No se tiene la información necesaria para poder crear las equivalencias de los productos, falta crear el fichero de productos de Siigo.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/tallas:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información del catalogo de tallas de Lider.
+      description: Permite subir la información del catalogo de tallas en la que se relacionan las tallas con el código de Siigo por medio de Excel al sistema.
+      operationId: loadTallas
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de Tallas. Se ha actualizado la tabla de equivalencias.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/colores:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información del catalogo de colores de Lider.
+      description: Permite subir la información del catalogo de colores en la que se relacionan los colores con el código de Siigo por medio de Excel al sistema.
+      operationId: loadColores
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de Colores. Se ha actualizado la tabla de equivalencias.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/bodegas:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información del catalogo de bodegas de Lider.
+      description: Permite subir la información del catalogo de bodegas en la que se relacionan las bodegas con el código de Siigo por medio de Excel al sistema.
+      operationId: loadBodegas
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigoso
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de Bodegas. Se ha actualizado la tabla de equivalencias.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/equivalencias:
+    get:
+      tags:
+        - Cargar
+      summary: Permite obtener la tabla de equivalencias
+      description: Permite obtener la tabla de equivalencias en la que relacionan los nombres de los insumos, telas, productos y su respectivo con los códigos de Siigo
+      operationId: equivalencias
       responses:
         '200':
           description: Tabla de equivalencias creada con exito
@@ -519,6 +740,62 @@ paths:
       summary: Permite cargar información de las ordenes de producción de insumos
       description: Permite cargar la información de las ordenes de producción relacionadas con los insumos
       operationId: ordenInsumos
+      requestBody:
+        description: Parametro necesario para cargar la información de los creditos de los insumos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /orden/tallas:
+    post:
+      tags:
+        - Orden
+      summary: Permite cargar información de las ordenes de producciónd de tallas
+      description: Permite cargar la información de las ordenes de producción relacionadas con las tallas
+      operationId: ordenTallas
+      requestBody:
+        description: Parametro necesario para cargar la información de los productos agrupados por tallas
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
       responses:
         '204':
           description: OK
@@ -559,6 +836,14 @@ paths:
       summary: Permite cargar información de las ordenes de producciónd de telas
       description: Permite cargar la información de las ordenes de producción relacionadas con las telas
       operationId: ordenTelas
+      requestBody:
+        description: Parametro necesario para cargar la información de los creditos de las telas
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
       responses:
         '204':
           description: OK

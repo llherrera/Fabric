@@ -1,6 +1,7 @@
 import ExcelJS, { Row, Cell } from 'exceljs';
 import fs from 'fs';
 import { diceCoefficient } from 'dice-coefficient';
+import { FILES_NAME } from "../utils/constants.ts";
 import { JSONInterface, JSONInterfaceData, JSONInterfaceExcel, JSONEquivalencia, ResponseCodesByName, SiigoFormat, JSONInterfaceFormat } from "../interfaces/index.ts";
 
 export const validateLength = (value: string, len: number) => {
@@ -50,7 +51,7 @@ export const validateLetter = (value: string, values: string[]) => {
     Colores: la key es la descripción y el value es un array de 1 elemento (codigo_siigo)
     Bodegas: la key es el nombre y el value es un array de 1 elemento (codigo_siigo)
 */
-export const readFileToGenerateJsonFile = async (path: string, row_: number, sheet: number = 0, key: number = 1, filename: string = 'filename') => {
+export const readFileToGenerateJsonFile = async (path: string, row_: number, sheet: number = 0, key: number = 1, filename: string = 'filename', delete_file: boolean = true) => {
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(path);
     const worksheet = workbook.worksheets[sheet];
@@ -82,7 +83,7 @@ export const readFileToGenerateJsonFile = async (path: string, row_: number, she
         }
     });
     fs.writeFileSync(`./uploads/${filename}.json`, JSON.stringify(jsonData));
-    fs.unlinkSync(path);
+    delete_file ? fs.unlinkSync(path) : null;
 }
 
 /*
@@ -151,59 +152,38 @@ const doExcelStyle = (sheet: ExcelJS.Worksheet) => {
 }
 
 export const doMatchColorInFile = async (path: string, filename: string) => {
-    const workbook = new ExcelJS.Workbook();
-    const newWorkbook = new ExcelJS.Workbook();
-    await workbook.xlsx.readFile(path);
-    let data: JSONEquivalencia = {};
-    for (let i = 1; i < 6; i = i + 2) {
-        const worksheet = workbook.worksheets[i];
-        const sheetName = i === 1 ? 'Códigos Insumos' : i === 3 ? 'Códigos Telas' : 'Códigos Terminados';
-        const key = i === 1 ? 2 : i === 3 ? 1 : 1; // aquí se escoje cual es la columna que será el key del objeto
-        let newSheet = newWorkbook.addWorksheet(sheetName);
-        newSheet = doExcelStyle(newSheet);
+    await readFileToGenerateJsonFile(path, 1, 0, 4, FILES_NAME.SiigoInsum, false);
+    await readFileToGenerateJsonFile(path, 1, 1, 2, FILES_NAME.LiderInsum, false);
+    await readFileToGenerateJsonFile(path, 1, 2, 4, FILES_NAME.SiigoTelas, false);
+    await readFileToGenerateJsonFile(path, 1, 3, 1, FILES_NAME.LiderTelas, false);
+    await readFileToGenerateJsonFile(path, 1, 4, 5, FILES_NAME.SiigoProds, false);
+    await readFileToGenerateJsonFile(path, 1, 5, 1, FILES_NAME.LiderProds);
+    addEquivalent(`uploads/${FILES_NAME.LiderInsum}.json`, `uploads/${FILES_NAME.SiigoInsum}.json`, FILES_NAME.CodesNameInsum, false);
+    addEquivalent(`uploads/${FILES_NAME.LiderTelas}.json`, `uploads/${FILES_NAME.SiigoTelas}.json`, FILES_NAME.CodesNameTelas, false);
+    addEquivalent(`uploads/${FILES_NAME.LiderProds}.json`, `uploads/${FILES_NAME.SiigoProds}.json`, FILES_NAME.CodesNameProds, true);
+    const name = await generateEquivalentTable(filename);
+    return name;
+}
 
-        const colums = worksheet.getColumn(key+1);
-        colums.eachCell((cell) => {
-            if (cell.value === null) cell.value = 'BLANCO';
-        });
-
-        let temp: JSONInterface = {};
-        worksheet.eachRow({includeEmpty: true}, (row: Row, rowNumber: number) => {
-            if (rowNumber > 1) {
-                let newRow: any = [];
-                row.eachCell((cell: Cell, colNumber: number) => {
-                    let fieldName = worksheet.getRow(rowNumber).getCell(key).value?.toString() ?? `EMPTY_${key}`;
-                    fieldName = fieldName.replace(/ +$/, "");
-                    const filePath = colNumber === key ? (i === 1 ? 'uploads/insumos_siigo.json' : 
-                                                        i === 3 ? 'uploads/Telas_Siigo.json' : 
-                                                        'uploads/Producto Terminado SIIGO.json') : 'uploads/COLORES.json';
-                    const file = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
-                    if (i === 1) {
-                        if (colNumber > 1) {
-                            let values = getSiigoCode(cell.value?.toString() ?? 'BLANCO', file, false);
-                            newRow.push(cell.value, ...values);
-                            filePath !== 'uploads/COLORES.json' ? temp[fieldName] = values : null;
-                        }
-                    } else {
-                        let values = getSiigoCode(cell.value?.toString() ?? 'BLANCO', file, i === 5);
-                        newRow.push(cell.value, ...values);
-                        filePath !== 'uploads/COLORES.json' ? temp[fieldName] = values : null;
-                    }
-                });
-                newSheet.addRow(newRow);
-            }
-        });
-        data[sheetName] = temp;
-    }
-    fs.writeFileSync(`./uploads/equivalencias.json`, JSON.stringify(data));
-    const name = `uploads/${filename}.xlsx`;
-    await newWorkbook.xlsx.writeFile(name);
+export const doCatalogueTable = async (path: string, filename: string) => {
+    await readFileToGenerateJsonFile(path, 7, 0, 2, FILES_NAME.Tallas, false);
+    await readFileToGenerateJsonFile(path, 7, 1, 2, FILES_NAME.Colores, false);
+    await readFileToGenerateJsonFile(path, 7, 2, 2, FILES_NAME.Bodegas);
+    addCatalogue(`uploads/${FILES_NAME.Tallas}.json`, FILES_NAME.CodesNameTalla);
+    addCatalogue(`uploads/${FILES_NAME.Colores}.json`, FILES_NAME.CodesNamecolor);
+    addCatalogue(`uploads/${FILES_NAME.Bodegas}.json`, FILES_NAME.CodesNameBodeg);
+    const name = await generateEquivalentTable(filename);
     return name;
 }
 
 export const generateEquivalentTable = async (filename: string) => {
     const workbook = new ExcelJS.Workbook();
-    const data: JSONEquivalencia = JSON.parse(fs.readFileSync('uploads/equivalencias.json', 'utf-8'));
+    let data: JSONEquivalencia = {};
+    try {
+        data = JSON.parse(fs.readFileSync('uploads/equivalencias.json', 'utf-8'));
+    } catch (error) {
+        data = {};
+    }
     for (const section in data) {
         const seccion = data[section];
         let sheet = workbook.addWorksheet(section);
@@ -251,7 +231,7 @@ export const addEquivalent = (lider_path: string, siigo_path: string, name: stri
     let temp: JSONInterface = {};
 
     for (const key_lider in lider)
-        temp[key_lider] = getSiigoCode(key_lider, siigo, code)
+        temp[key_lider] = getSiigoCode(key_lider, siigo, code);
     data[name] = temp;
     fs.writeFileSync(`uploads/equivalencias.json`, JSON.stringify(data));
 }
@@ -282,7 +262,6 @@ const getSiigoCode = (key_lider: string, file_siigo: JSONInterface, isCode: bool
     let maxKey = '';
     for (const key in file_siigo) {
         let key_ = isCode ? file_siigo[key][3] : key;
-        // key_ = key_.replace('TALLA ', "");
         let assertion = isCode ? 0.999 : 0.65;
         let valueCoef = diceCoefficient(key_, key_field);
         if (valueCoef > assertion) {

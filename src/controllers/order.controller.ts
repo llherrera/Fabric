@@ -55,18 +55,3 @@ export const generateSiigoFormat = async (req: Request, res: Response) => {
         return res.status(500).json({ msg: e.message });
     }
 }
-
-export const InsumosEquivalent = async (req: Request, res: Response) => {
-    await funct.addEquivalent('uploads/insumos_lider.json', 'uploads/insumos_siigo.json', 'Códigos Insumos', false);
-    res.json({});
-}
-
-export const TelasEquivalent = async (req: Request, res: Response) => {
-    await funct.addEquivalent('uploads/Telas Lider.json', 'uploads/Telas_Siigo.json', 'Códigos Telas', false);
-    res.json({});
-}
-
-export const ProductosEquivalent = async (req: Request, res: Response) => {
-    await funct.addEquivalent('uploads/Producto terminado Líder.json', 'uploads/Producto Terminado SIIGO.json', 'Códigos Terminados', true);
-    res.json({});
-}
