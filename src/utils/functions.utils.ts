@@ -1,8 +1,9 @@
 import ExcelJS, { Row, Cell } from 'exceljs';
 import fs from 'fs';
-import { diceCoefficient } from 'dice-coefficient';
-import { FILES_NAME } from "../utils/constants.ts";
-import { JSONInterface, JSONInterfaceData, JSONInterfaceExcel, JSONEquivalencia, ResponseCodesByName, SiigoFormat, JSONInterfaceFormat } from "../interfaces/index.ts";
+import { FILES_NAME } from "../utils/constants";
+import { JSONInterface, JSONInterfaceData, JSONInterfaceExcel, JSONEquivalencia, ResponseCodesByName, SiigoFormat, JSONInterfaceFormat } from "../interfaces/index";
+
+const dc = require('dice-coefficient');
 
 export const validateLength = (value: string, len: number) => {
     return value.length === len;
@@ -263,7 +264,7 @@ const getSiigoCode = (key_lider: string, file_siigo: JSONInterface, isCode: bool
     for (const key in file_siigo) {
         let key_ = isCode ? file_siigo[key][3] : key;
         let assertion = isCode ? 0.999 : 0.65;
-        let valueCoef = diceCoefficient(key_, key_field);
+        let valueCoef = dc(key_, key_field);
         if (valueCoef > assertion) {
             if (valueCoef > maxAssertion) {
                 maxKey = key;

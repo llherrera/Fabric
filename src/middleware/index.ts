@@ -1,2 +1,2 @@
-export * from './fileManager.middleware.ts';
-export * from './jsonManager.middleware.ts';
+export * from './fileManager.middleware';
+export * from './jsonManager.middleware';

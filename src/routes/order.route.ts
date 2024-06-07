@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { setOrderInsumos, setOrderTelas, setOrderTerminados, setOrderTallas, generateSiigoFormat } from '../controllers/order.controller.ts';
-import { fileManager } from '../middleware/index.ts';
-import { Path } from '../utils/constants.ts';
+import { setOrderInsumos, setOrderTelas, setOrderTerminados, setOrderTallas, generateSiigoFormat } from '../controllers/order.controller';
+import { fileManager } from '../middleware/index';
+import { Path } from '../utils/constants';
 
 const router = Router();
 const {  } = Path;

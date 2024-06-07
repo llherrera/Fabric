@@ -1,6 +1,6 @@
-import { SiigoFormat } from './siigoFormat.ts';
+import { SiigoFormat } from './siigoFormat';
 
-export * from './siigoFormat.ts';
+export * from './siigoFormat';
 
 export interface JSONInterface {
     [key:string]: string[];

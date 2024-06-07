@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import * as router from './routes/index.ts';
-import { Path } from './utils/constants.ts';
+import * as router from './routes/index';
+import { Path } from './utils/constants';
 
 const app = express();
 

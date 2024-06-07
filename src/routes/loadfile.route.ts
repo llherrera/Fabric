@@ -1,7 +1,7 @@
 import { Router } from "express";
-import * as controller from '../controllers/index.ts';
-import { fileManager } from '../middleware/index.ts';
-import { Path } from '../utils/constants.ts';
+import * as controller from '../controllers/index';
+import { fileManager } from '../middleware/index';
+import { Path } from '../utils/constants';
 
 const router = Router();
 const { Load } = Path;

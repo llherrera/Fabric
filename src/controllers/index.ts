@@ -1,1 +1,1 @@
-export * from './load.controller.ts';
+export * from './load.controller';

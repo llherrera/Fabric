@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express';
-import { LoadRouter } from './loadfile.route.ts';
-import { orderRouter } from './order.route.ts';
+import { LoadRouter } from './loadfile.route';
+import { orderRouter } from './order.route';
 
 const router = Router();
 

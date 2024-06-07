@@ -1,4 +1,4 @@
-import { getCodesByName, getCategoryCode } from "../utils/functions.utils.ts";
+import { getCodesByName, getCategoryCode } from "../utils/functions.utils";
 
 /*
 TIPO_DE_COMPROBANTE: string;         // len 1 (F, G o P)

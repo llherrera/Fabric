@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import * as funct from "../utils/functions.utils.ts";
-import { FILES_NAME } from "../utils/constants.ts";
+import * as funct from "../utils/functions.utils";
+import { FILES_NAME } from "../utils/constants";
 import fs from 'fs';
 import path from "path";
 

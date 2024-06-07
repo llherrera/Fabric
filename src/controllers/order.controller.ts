@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as funct from "../utils/functions.utils.ts";
+import * as funct from "../utils/functions.utils";
 import path from "path";
 
 export const setOrderInsumos = async (req: Request, res: Response) => {
