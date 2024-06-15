@@ -5,6 +5,7 @@
         "outDir": "dist",
         "strict": true,
         "baseUrl": "./",
+        "lib": ["ES2021"],
         "typeRoots": ["src/types/variables.d.ts"],
         "esModuleInterop": true,
         "skipLibCheck": true,

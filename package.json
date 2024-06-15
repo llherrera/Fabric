@@ -21,13 +21,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/morgan": "^1.9.9",
     "cors": "^2.8.5",
     "dice-coefficient": "^1.0.5",
     "dotenv": "^16.4.5",
     "exceljs": "^4.4.0",
     "express": "^4.19.2",
     "file-saver": "^2.0.5",
-    "multer": "^1.4.5-lts.1"
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "winston": "^3.13.0"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

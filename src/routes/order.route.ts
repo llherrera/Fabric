@@ -9,9 +9,9 @@ const {  } = Path;
 
 router.get('/', generateSiigoFormat);
 
-router.post('/insumos', fileManager, setOrderInsumos);
-router.post('/tallas', fileManager, setOrderTallas);
-router.post('/telas', fileManager, setOrderTelas);
+router.post(Path.Insumos, fileManager, setOrderInsumos);
+router.post(Path.Tallas, fileManager, setOrderTallas);
+router.post(Path.Telas, fileManager, setOrderTelas);
 
 
 export { router as orderRouter };

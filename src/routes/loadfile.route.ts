@@ -4,26 +4,25 @@ import { fileManager } from '../middleware/index';
 import { Path } from '../utils/constants';
 
 const router = Router();
-const { Load } = Path;
 
-router.post('/codigos', fileManager, controller.getEquivalencesTable);
-router.post('/catalogo', fileManager, controller.doCatalogueTable);
-
-
-router.post('/insumos-siigo', fileManager, controller.generateInsumosSiigoFile);
-router.post('/telas-siigo', fileManager, controller.generateTelasSiigoFile);
-router.post('/productos-siigo', fileManager, controller.generateTerminadoSiigoFile);
-
-router.post('/insumos-lider', fileManager, controller.generateInsumoLiderFile);
-router.post('/telas-lider', fileManager, controller.generateTelasLiderFile);
-router.post('/productos-lider', fileManager, controller.generateTerminadoLiderFile);
-
-router.post('/tallas', fileManager, controller.generateTallasFile);
-router.post('/colores', fileManager, controller.generateColoresFile);
-router.post('/bodegas', fileManager, controller.generatebodegasFile);
+router.post(Path.Codes, fileManager, controller.generateAndGetEquivalencesTable);
+router.post(Path.Catalogue, fileManager, controller.doCatalogueTable);
 
 
-router.get('/equivalencias', controller.generateTable);
+router.post(Path.SiigoIns, fileManager, controller.generateInsumosSiigoFile);
+router.post(Path.SiigoTel, fileManager, controller.generateTelasSiigoFile);
+router.post(Path.SiigoPro, fileManager, controller.generateTerminadoSiigoFile);
+
+router.post(Path.LiderIns, fileManager, controller.generateInsumoLiderFile);
+router.post(Path.LiderTel, fileManager, controller.generateTelasLiderFile);
+router.post(Path.LiderPro, fileManager, controller.generateTerminadoLiderFile);
+
+router.post(Path.Tallas, fileManager, controller.generateTallasFile);
+router.post(Path.Colors, fileManager, controller.generateColoresFile);
+router.post(Path.Bodega, fileManager, controller.generatebodegasFile);
+
+
+router.get(Path.Equivalent, controller.generateTable);
 
 
 export { router as LoadRouter };

@@ -1,34 +1,9 @@
 import ExcelJS, { Row, Cell } from 'exceljs';
 import fs from 'fs';
-import { FILES_NAME } from "../utils/constants";
+import { FILES_NAME, regParentesis } from "../utils/constants";
 import { JSONInterface, JSONInterfaceData, JSONInterfaceExcel, JSONEquivalencia, ResponseCodesByName, SiigoFormat, JSONInterfaceFormat } from "../interfaces/index";
 
 const dc = require('dice-coefficient');
-
-export const validateLength = (value: string, len: number) => {
-    return value.length === len;
-}
-
-export const validateDecimals = (value: number, intergersCount: number, decimalsCount: number) => {
-    const valorString = value.toString();
-    const partes = valorString.split('.');
-    if (partes[0].length > intergersCount) return false;
-    if (partes[1] && partes[1].length > decimalsCount) return false;
-    return true;
-}
-
-export const validateNIT = (value: string | number, len: number) => {
-    return true; // To Do: cambiar segun requerimiento
-}
-
-export const validateCode = (value: string) => {
-    const regex: RegExp = /^[A-Z]-\d{3}$/;
-    return regex.test(value)
-}
-
-export const validateLetter = (value: string, values: string[]) => {
-    return values.includes(value);
-}
 
 /*  los parametros de la función 
     path:  la ruta del fichero xlsx de donde se obtiene la información para el JSON
@@ -72,7 +47,6 @@ export const readFileToGenerateJsonFile = async (path: string, row_: number, she
             row.eachCell((cell: Cell, colNumber: number) => {
                 if (colNumber !== key) {
                     let fieldName = worksheet.getRow(rowNumber).getCell(key).value?.toString() ?? `EMPTY_${key}`;
-                    fieldName = fieldName.replace(/  +/g, "");
                     fieldName = fieldName.replace(/ +$/, "");
                     let value = (cell.value?.toString() ?? '').replace(/ +$/g, "");
                     value = value === '[object Object]' ? `${temp[colNumber-3]}-${temp[colNumber-2]}` : value;
@@ -124,35 +98,37 @@ export const readInputFile = async (path: string, filename: string, rowStart: nu
     fs.unlinkSync(path);
 }
 
-const doExcelStyle = (sheet: ExcelJS.Worksheet) => {
-    sheet.columns = [
-        { header: 'Descripción', key: 'descripcion', width: 50 },
-        { header: 'Línea producto', key: 'linea_producto', width: 15 },
-        { header: 'Grupo producto', key: 'grupo_producto', width: 15 },
-        { header: 'Código producto', key: 'codigo_producto', width: 15 },
-        { header: 'Color', key: 'color', width: 15 },
-        { header: 'Código color', key: 'codigo_color', width: 15 },
-    ];
-    sheet.getRow(1).fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: '99CCFF' },
-    };
-    sheet.getColumn(2).alignment = { horizontal: 'center' };
-    sheet.getColumn(3).alignment = { horizontal: 'center' };
-    sheet.getColumn(4).alignment = { horizontal: 'center' };
-    sheet.getColumn(5).alignment = { horizontal: 'center' };
-    sheet.getColumn(6).alignment = { horizontal: 'center' };
-    sheet.getColumn(1).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
-    sheet.getColumn(2).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
-    sheet.getColumn(3).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
-    sheet.getColumn(4).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
-    sheet.getColumn(5).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
-    sheet.getColumn(6).border = {top: {style:'thin'},left: {style:'thin'},bottom: {style:'thin'},right: {style:'thin'}};
-    return sheet;
+export const addEquivalent = (lider_path: string, siigo_path: string, name: string, code: boolean) => {
+    const lider = JSON.parse(fs.readFileSync(lider_path, 'utf-8'));
+    const siigo = JSON.parse(fs.readFileSync(siigo_path, 'utf-8'));
+    let data: JSONEquivalencia = {};
+    try {
+        data = JSON.parse(fs.readFileSync('uploads/equivalencias.json', 'utf-8'));
+    } catch (error) {
+        data = {};
+    }
+    let temp: JSONInterface = {};
+
+    for (const key_lider in lider)
+        temp[key_lider] = getSiigoCode(key_lider, siigo, code);
+
+    data[name] = temp;
+    fs.writeFileSync(`uploads/equivalencias.json`, JSON.stringify(data));
 }
 
-export const doMatchColorInFile = async (path: string, filename: string) => {
+export const addCatalogue = (cat_path: string, name: string) => {
+    const cat = JSON.parse(fs.readFileSync(cat_path, 'utf-8'));
+    let data: JSONEquivalencia = {};
+    try {
+        data = JSON.parse(fs.readFileSync('uploads/equivalencias.json', 'utf-8'));
+    } catch (error) {
+        data = {};
+    }
+    data[name] = cat;
+    fs.writeFileSync(`uploads/equivalencias.json`, JSON.stringify(data));
+}
+
+export const doTable = async (path: string, filename: string) => {
     await readFileToGenerateJsonFile(path, 1, 0, 4, FILES_NAME.SiigoInsum, false);
     await readFileToGenerateJsonFile(path, 1, 1, 2, FILES_NAME.LiderInsum, false);
     await readFileToGenerateJsonFile(path, 1, 2, 4, FILES_NAME.SiigoTelas, false);
@@ -220,35 +196,6 @@ export const generateEquivalentTable = async (filename: string) => {
     return name;
 }
 
-export const addEquivalent = (lider_path: string, siigo_path: string, name: string, code: boolean) => {
-    const lider = JSON.parse(fs.readFileSync(lider_path, 'utf-8'));
-    const siigo = JSON.parse(fs.readFileSync(siigo_path, 'utf-8'));
-    let data: JSONEquivalencia = {};
-    try {
-        data = JSON.parse(fs.readFileSync('uploads/equivalencias.json', 'utf-8'));
-    } catch (error) {
-        data = {};
-    }
-    let temp: JSONInterface = {};
-
-    for (const key_lider in lider)
-        temp[key_lider] = getSiigoCode(key_lider, siigo, code);
-    data[name] = temp;
-    fs.writeFileSync(`uploads/equivalencias.json`, JSON.stringify(data));
-}
-
-export const addCatalogue = (cat_path: string, name: string) => {
-    const cat = JSON.parse(fs.readFileSync(cat_path, 'utf-8'));
-    let data: JSONEquivalencia = {};
-    try {
-        data = JSON.parse(fs.readFileSync('uploads/equivalencias.json', 'utf-8'));
-    } catch (error) {
-        data = {};
-    }
-    data[name] = cat;
-    fs.writeFileSync(`uploads/equivalencias.json`, JSON.stringify(data));
-}
-
 export const getCategoryCode = (value: string, path: string) => {
     const productos = JSON.parse(fs.readFileSync(path, 'utf-8'));
     let values = getSiigoCode(value, productos, false);
@@ -259,17 +206,56 @@ const getSiigoCode = (key_lider: string, file_siigo: JSONInterface, isCode: bool
     let key_field = key_lider.replace(/  +/g, "");
     key_field = isCode ? key_lider : key_field.replace(/[0-9]{1,4} ?(- ?[0-9]{1,4}){1,2} ?/g, "");
     key_field = key_field.replace(/ +$/, "");
-    let maxAssertion = 0;
-    let maxKey = '';
+    key_field = key_field.replace(/%[a-zA-Z]/g, (match) => match.replace('%', '% '));
+    key_field = key_field.replace(/[a-zA-Z]\(/g, (match) => match.replace('(', '( '));
+    key_field = key_field.replaceAll('ALGO ', 'ALGODON ');
+    key_field = key_field.replaceAll('ALG ', 'ALGODON ');
+    key_field = key_field.replaceAll('POLI ', 'POLIESTER ');
+    key_field = key_field.replaceAll('POL ', 'POLIESTER ');
+
+    let maxAssertion = 0, maxAssertionT = 0, maxKey = '';
     for (const key in file_siigo) {
         let key_ = isCode ? file_siigo[key][3] : key;
-        let assertion = isCode ? 0.999 : 0.65;
+        key_ = key_.replace(/%[a-zA-Z]/g, (match) => match.replace('%', '% '));
+        key_ = key_.replace(/[a-zA-Z]\(/g, (match) => match.replace('(', '( '));
+        key_ = key_.replaceAll('ALGO ', 'ALGODON ');
+        key_ = key_.replaceAll('ALG ', 'ALGODON ');
+        key_ = key_.replaceAll('POLI ', 'POLIESTER ');
+        key_ = key_.replaceAll('POL ', 'POLIESTER ');
+        key_ = key_.replaceAll('TALLA ', '');
+        key_ = key_.trim();
+
+        let assertion = isCode ? 0.999 : 0.7;
+        const matchSiigo = key_.match(regParentesis);
+        const matchLider = key_field.match(regParentesis);
         let valueCoef = dc(key_, key_field);
-        if (valueCoef > assertion) {
+        if (valueCoef > 0.9) {
             if (valueCoef > maxAssertion) {
                 maxKey = key;
                 maxAssertion = valueCoef;
-            } 
+            }
+        } else if (matchLider && matchSiigo) {
+            let nombreS     = matchSiigo[1].trim();
+            let comercialS  = matchSiigo[2].trim();
+            let nombreL     = matchLider[1].trim();
+            let comercialL  = matchLider[2].trim();
+
+            let valueNombre   = dc(nombreS, nombreL);
+            let valueComercial = dc(comercialS, comercialL);
+            if (valueNombre > assertion && valueComercial > assertion) {
+                if (valueNombre > maxAssertion && (valueComercial >= maxAssertionT || valueComercial > assertion)) {
+                    maxKey = key;
+                    maxAssertion = valueNombre;
+                    maxAssertionT = valueComercial;
+                } 
+            }
+        } else if (matchLider === null && matchSiigo === null) {
+            if (valueCoef > assertion) {
+                if (valueCoef > maxAssertion) {
+                    maxKey = key;
+                    maxAssertion = valueCoef;
+                }
+            }
         }
     }
     if(maxKey !== '') return file_siigo[maxKey].slice(0,3);
@@ -277,8 +263,8 @@ const getSiigoCode = (key_lider: string, file_siigo: JSONInterface, isCode: bool
 }
 
 const doDataToFormat = () => {
-    const insumosData: JSONInterfaceExcel = JSON.parse(fs.readFileSync('uploads/ProductosInsumos.json', 'utf-8'));
-    const telasData: JSONInterfaceExcel = JSON.parse(fs.readFileSync('uploads/ProductosTelas.json', 'utf-8'));
+    const insumosData: JSONInterfaceExcel = JSON.parse(fs.readFileSync(`uploads/${FILES_NAME.CreditosInsumos}.json`, 'utf-8'));
+    const telasData: JSONInterfaceExcel = JSON.parse(fs.readFileSync(`uploads/${FILES_NAME.CreditosTelas}.json`, 'utf-8'));
     let coleccion = new Map<string, SiigoFormat[]>();
     for (const key in insumosData) {
         const items = insumosData[key];
@@ -287,16 +273,16 @@ const doDataToFormat = () => {
             const color = items[i]['COLOR'];
             const refer = items[i]['REF LIDER'];
             const taler = items[i]['Taller'];
-            const canti = parseFloat(insumosData[key][i]['Cantidad']);
+            const canti = parseFloat(items[i]['Cantidad Insumos Retirados']);
             let register = new SiigoFormat(
                 1405053300,
                 'C',
                 desct,
                 canti,
                 12,
-                "100"
+                "1"
             );
-            register.setCodigosSiigo(desct, 'Códigos Insumos');
+            register.setCodigosSiigo(desct, FILES_NAME.CodesNameInsum);
             register.setColor(color);
             if (coleccion.has(key)) {
                 const secuencia = coleccion.get(key)?.length;
@@ -321,9 +307,9 @@ const doDataToFormat = () => {
                 desct,
                 canti,
                 1,
-                "100"
+                "1"
             );
-            register.setCodigosSiigo(desct, 'Códigos Telas');
+            register.setCodigosSiigo(desct, FILES_NAME.CodesNameTelas);
             register.setColor(color);
             if (coleccion.has(key)) {
                 const secuencia = coleccion.get(key)?.length;
@@ -336,6 +322,62 @@ const doDataToFormat = () => {
         }
     }
     const JSONDATA = JSON.stringify(Object.fromEntries(coleccion));
+    fs.writeFileSync(`uploads/dataFormat.json`, JSONDATA);
+    return `uploads/dataFormat.json`;
+}
+
+const doDebit = () => {
+    const data: JSONInterfaceFormat = JSON.parse(fs.readFileSync('uploads/dataFormat.json', 'utf-8'));
+    const tallas: JSONInterfaceExcel = JSON.parse(fs.readFileSync(`uploads/${FILES_NAME.CreditosTallas}.json`, 'utf-8'));
+    const refColor: JSONInterfaceData = JSON.parse(fs.readFileSync(`uploads/${FILES_NAME.LiderProds}.json`, 'utf-8'));
+    for (const op in data) {
+        const tallasOp = tallas[op];
+        const secuencia = data[op].length + 1;        
+        if (tallasOp) {
+            for (let i = 0; i < tallasOp.length; i++) {
+                const item = tallasOp[i];
+                let cantidad = parseFloat(item['cant_asignada']);
+                let register = new SiigoFormat(
+                    1410053100,
+                    'D',
+                    `OP${op}`,
+                    cantidad,
+                    0,
+                    '100'
+                );
+                const ref = item['referencia_antigua'];
+                register.setSecuencia(secuencia);
+                register.setCodigosSiigo(ref, 'Códigos Terminados');
+                register.setCodigoBodega(item['c_razon_social']);
+                register.setTalla(item['c_id_talla']);
+                try {
+                    register.setColor(refColor[ref][0]);
+                } catch (error) {
+                    register.setColor('BLANCO');
+                }
+                data[op].push(register);
+            }
+        } else {
+            let cantidad = 0;
+            let talla = 35;
+            const ref: string = getPropertyFormatByOP(op, 'ref');
+            const taller: string = getPropertyFormatByOP(op, 'taller');
+            let register = new SiigoFormat(
+                1410053100,
+                'D',
+                `OP${op}`,
+                cantidad,
+                0,
+                '100'
+            );
+            register.setSecuencia(secuencia);
+            register.setCodigosSiigo(ref, 'Códigos Terminados');
+            register.setCodigoBodega(taller);
+            register.setTalla(talla.toString());
+            data[op].push(register);
+        }
+    }
+    const JSONDATA = JSON.stringify(data);
     fs.writeFileSync(`uploads/dataFormat.json`, JSONDATA);
     return `uploads/dataFormat.json`;
 }
@@ -436,58 +478,6 @@ const doExcelStyleSiigo = (worksheet: ExcelJS.Worksheet) => {
     return worksheet;
 }
 
-const doDebit = () => {
-    const data: JSONInterfaceFormat = JSON.parse(fs.readFileSync('uploads/dataFormat.json', 'utf-8'));
-    const tallas: JSONInterfaceExcel = JSON.parse(fs.readFileSync('uploads/productosTallas.json', 'utf-8'));
-    const refColor: JSONInterfaceData = JSON.parse(fs.readFileSync('uploads/Producto terminado Líder.json', 'utf-8'));
-    for (const op in data) {
-        const tallasOp = tallas[op];
-        const secuencia = data[op].length + 1;
-        if (tallasOp) {
-            for (let i = 0; i < tallasOp.length; i++) { 
-                const item = tallasOp[i];
-                let cantidad = parseFloat(item['cant_asignada']);
-                let register = new SiigoFormat(
-                    1410053100,
-                    'D',
-                    `OP${op}`,
-                    cantidad,
-                    0,
-                    '100'
-                );
-                const ref = item['referencia_antigua'];
-                register.setSecuencia(secuencia);
-                register.setCodigosSiigo(ref, 'Códigos Terminados');
-                register.setCodigoBodega(item['c_razon_social']);
-                register.setTalla(item['c_id_talla']);
-                register.setColor(refColor[ref][0]);
-                data[op].push(register);
-            }
-        } else {
-            let cantidad = 0;
-            let talla = 35;
-            const ref: string = getPropertyFormatByOP(op, 'ref');
-            const taller: string = getPropertyFormatByOP(op, 'taller');
-            let register = new SiigoFormat(
-                1410053100,
-                'D',
-                `OP${op}`,
-                cantidad,
-                0,
-                '100'
-            );
-            register.setSecuencia(secuencia);
-            register.setCodigosSiigo(ref, 'Códigos Terminados');
-            register.setCodigoBodega(taller);
-            register.setTalla(talla.toString());
-            data[op].push(register);
-        }
-    }
-    const JSONDATA = JSON.stringify(data);
-    fs.writeFileSync(`uploads/dataFormat.json`, JSONDATA);
-    return `uploads/dataFormat.json`;
-}
-
 const getPropertyFormatByOP = (op: string, property: string) => {
     const insumosData: JSONInterfaceExcel = JSON.parse(fs.readFileSync('uploads/ProductosInsumos.json', 'utf-8'));
     const telasData: JSONInterfaceExcel = JSON.parse(fs.readFileSync('uploads/ProductosTelas.json', 'utf-8'));
@@ -565,10 +555,19 @@ export const getCodesByName = (description: string, type: string): ResponseCodes
     let linea_producto: string, grupo_producto: string, codigo_producto: string;
 
     const tablaEqui: JSONEquivalencia = JSON.parse(fs.readFileSync('uploads/equivalencias.json', 'utf-8'));
-    let values = tablaEqui[type][description];
-    linea_producto = (values !== undefined || values[0] !== '') ? values[0] : '0';
-    grupo_producto = (values !== undefined || values[1] !== '') ? values[1] : '0';
-    codigo_producto = (values !== undefined || values[2] !== '') ? values[2] : '0';
-
+    
+    try {
+        let values = tablaEqui[type][description];
+        linea_producto = (values !== undefined || values[0] !== '') ? values[0] : '0';
+        grupo_producto = (values !== undefined || values[1] !== '') ? values[1] : '0';
+        codigo_producto = (values !== undefined || values[2] !== '') ? values[2] : '0';
+    } catch (error) {
+        const siigo_path = (type === FILES_NAME.CodesNameInsum ? `uploads/${FILES_NAME.SiigoInsum}.json` : type === FILES_NAME.CodesNameTelas ? `uploads/${FILES_NAME.SiigoTelas}.json` : type === FILES_NAME.CodesNameProds ? `uploads/${FILES_NAME.SiigoProds}.json` : 'Error');
+        const siigo = JSON.parse(fs.readFileSync(siigo_path, 'utf-8'));
+        let values = getSiigoCode(description, siigo, type === FILES_NAME.CodesNameProds);
+        linea_producto = (values !== undefined || values[0] !== '') ? values[0] : '0';
+        grupo_producto = (values !== undefined || values[1] !== '') ? values[1] : '0';
+        codigo_producto = (values !== undefined || values[2] !== '') ? values[2] : '0';
+    }
     return {linea_producto, grupo_producto, codigo_producto};
 }

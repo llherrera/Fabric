@@ -1,4 +1,5 @@
 import { getCodesByName, getCategoryCode } from "../utils/functions.utils";
+import { FILES_NAME } from "../utils/constants";
 
 /*
 TIPO_DE_COMPROBANTE: string;         // len 1 (F, G o P)
@@ -81,17 +82,17 @@ export class SiigoFormat {
         this.CODIGO_PRODUCTO = parseInt(codigo_producto === '' ? '0' : codigo_producto);
     }
     setCodigoBodega(value: string) {
-        const pathfile = 'uploads/BODEGAS.json';
+        const pathfile = `uploads/${FILES_NAME.Bodegas}.json`;
         const code = getCategoryCode(value, pathfile);
         this.CODIGO_DE_LA_BODEGA = parseInt(code);
     }
     setTalla(value: string) {
-        const pathfile = 'uploads/TALLA.json';
+        const pathfile = `uploads/${FILES_NAME.Tallas}.json`;
         const code = getCategoryCode(value, pathfile);
         this.CLASIFICACION_1 = code;
     }
     setColor(value: string) {
-        const pathfile = 'uploads/COLORES.json';
+        const pathfile = `uploads/${FILES_NAME.Colores}.json`;
         const code = getCategoryCode(value, pathfile);
         this.CLASIFICACION_2 = code;
     }

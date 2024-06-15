@@ -1,6 +1,23 @@
+export const regParentesis = /^(.*)\((.*)\)$/;
+
 export const Path = {
     Base: '/',
-    Load: '/loadfile',
+    Load: '/cargar',
+    Order: '/orden',
+    Codes: '/codigos',
+    Catalogue: '/catalogo',
+    SiigoIns: '/insumos-siigo',
+    SiigoTel: '/telas-siigo',
+    SiigoPro: '/productos-siigo',
+    LiderIns: '/insumos-lider',
+    LiderTel: '/telas-lider',
+    LiderPro: '/productos-lider',
+    Tallas: '/tallas',
+    Colors: '/colores',
+    Bodega: '/bodegas',
+    Equivalent: '/equivalencias',
+    Insumos: '/insumos',
+    Telas: '/telas',
 }
 
 export const ErrorMessages = {
@@ -116,7 +133,13 @@ export const FILES_NAME = {
     CodesNameInsum: 'Códigos Insumos',
     CodesNameTelas: 'Códigos Telas',
     CodesNameProds: 'Códigos Terminados',
+    CodesNameProce: 'Códigos Proceso',
     CodesNameTalla: 'Códigos Tallas',
     CodesNamecolor: 'Códigos Colores',
     CodesNameBodeg: 'Códigos Bodegas',
+
+    CreditosInsumos:     'productosInsumos',
+    CreditosTelas:       'productosTelas',
+    CreditosTerminados:  'productosTerminados',
+    CreditosTallas:      'productosTallas',
 }
