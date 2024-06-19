@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
 import * as funct from "../utils/functions.utils";
-import { FILES_NAME } from "../utils/constants";
 import fs from 'fs';
 import path from "path";
+import { FILES_NAME } from "../utils/constants";
 import { logger } from '../utils/logger.utils';
+import { NError } from '../utils/errors.utils';
 
 export const generateInsumosSiigoFile = async (req: Request, res: Response) => {
     const { path_file } = req.body;
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
     let msg: string = '';
     try {
         logger.info("Start generating JSON with 'Insumos' codes in Siigo");
@@ -14,17 +19,22 @@ export const generateInsumosSiigoFile = async (req: Request, res: Response) => {
         logger.info("Created JSON with 'Insumos' codes in Siigo");
         msg = 'Se ha creado el fichero de insumos de Siigo';
         if (!fs.existsSync(`uploads/${FILES_NAME.LiderInsum}.json`))
-            return res.status(201).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de los insumos, falta crear el fichero de insumos de Lider.`});
+            return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de los insumos, falta crear el fichero de insumos de Lider.`});
         funct.addEquivalent(`uploads/${FILES_NAME.LiderInsum}.json`, `uploads/${FILES_NAME.SiigoInsum}.json`, FILES_NAME.CodesNameInsum, false);
         logger.info("Updated Equivalent table");
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
-        res.status(400).json({msg: error.message});
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
     }
 }
 
 export const generateInsumoLiderFile = async (req: Request, res: Response) => {
     const { path_file } = req.body;
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
     let msg: string = '';
     try {
         logger.info("Start generating JSON with 'Insumos' codes in Lider");
@@ -37,12 +47,17 @@ export const generateInsumoLiderFile = async (req: Request, res: Response) => {
         logger.info("Updated Equivalent table");
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
-        res.status(400).json({msg: error.message});
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
     }
 }
 
 export const generateTelasSiigoFile = async (req: Request, res: Response) => {
     const { path_file } = req.body;
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
     let msg: string = '';
     try {
         logger.info("Start generating JSON with 'Telas' codes in Siigo");
@@ -55,12 +70,17 @@ export const generateTelasSiigoFile = async (req: Request, res: Response) => {
         logger.info("Updated Equivalent table");
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});
     } catch (error) {
-        res.status(400).json({msg: error.message});
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
     }
 }
 
 export const generateTelasLiderFile = async (req: Request, res: Response) => {
     const { path_file } = req.body;
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
     let msg: string = '';
     try {
         logger.info("Start generating JSON with 'Telas' codes in Lider");
@@ -73,12 +93,17 @@ export const generateTelasLiderFile = async (req: Request, res: Response) => {
         logger.info("Updated Equivalent table");
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
-        res.status(400).json({msg: error.message});
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
     }
 }
 
 export const generateTerminadoSiigoFile = async (req: Request, res: Response) => {
     const { path_file } = req.body;
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
     let msg: string = '';
     try {
         logger.info("Start generating JSON with 'Productos' codes in Siigo");
@@ -91,12 +116,17 @@ export const generateTerminadoSiigoFile = async (req: Request, res: Response) =>
         logger.info("Updated Equivalent table");
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
-        res.status(400).json({msg: error.message});
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
     }
 }
 
 export const generateTerminadoLiderFile = async (req: Request, res: Response) => {
     const { path_file } = req.body;
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
     let msg: string = '';
     try {
         logger.info("Start generating JSON with 'Productos' codes in Lider");
@@ -109,12 +139,17 @@ export const generateTerminadoLiderFile = async (req: Request, res: Response) =>
         logger.info("Updated Equivalent table");
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
-        res.status(400).json({msg: error.message});
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
     }
 }
 
 export const generateTallasFile = async (req: Request, res: Response) => {
     const { path_file } = req.body;
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
     let msg: string = '';
     try {
         logger.info("Start generating JSON with 'Tallas' codes");
@@ -125,12 +160,17 @@ export const generateTallasFile = async (req: Request, res: Response) => {
         logger.info("Updated Equivalent table");
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});    
     } catch (error) {
-        res.status(400).json({msg: error.message});
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
     }
 }
 
 export const generateColoresFile = async (req: Request, res: Response) => {
     const { path_file } = req.body;
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
     let msg: string = '';
     try {
         logger.info("Start generating JSON with 'Colores' codes");
@@ -141,12 +181,17 @@ export const generateColoresFile = async (req: Request, res: Response) => {
         logger.info("Updated Equivalent table");
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});    
     } catch (error) {
-        res.status(400).json({msg: error.message});
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
     }
 }
 
-export const generatebodegasFile = async (req: Request, res: Response) => {
+export const generateBodegasFile = async (req: Request, res: Response) => {
     const { path_file } = req.body;
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
     let msg: string = '';
     try {
         logger.info("Start generating JSON with 'Bodegas' codes");
@@ -157,41 +202,109 @@ export const generatebodegasFile = async (req: Request, res: Response) => {
         logger.info("Updated Equivalent table");
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});    
     } catch (error) {
-        res.status(400).json({msg: error.message});
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
+    }
+}
+
+export const generateProcessFile = async (req: Request, res: Response) => {
+    const { path_file } = req.body;
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
+    let msg: string = '';
+    try {
+        logger.info("Start generating JSON with 'Procesos' codes");
+        await funct.readFileToGenerateJsonFile(path_file, 1, 3, 2, FILES_NAME.Procesos);
+        logger.info("Created JSON with 'Procesos' codes");
+        msg = 'Se ha creado el fichero de Procesos';
+        funct.addCatalogue(`uploads/${FILES_NAME.Procesos}.json`, FILES_NAME.CodesNameProce);
+        logger.info("Updated Equivalent table");
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});    
+    } catch (error) {
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
+    }
+}
+
+export const generateClientFile = async (req: Request, res: Response) => {
+    const { path_file } = req.body;
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
+    let msg: string = '';
+    try {
+        logger.info("Start generating JSON with 'Clientes' codes");
+        await funct.readFileToGenerateJsonFile(path_file, 1, 4, 2, FILES_NAME.Clientes);
+        logger.info("Created JSON with 'Clientes' codes");
+        msg = 'Se ha creado el fichero de Clientes';
+        funct.addCatalogue(`uploads/${FILES_NAME.Clientes}.json`, FILES_NAME.CodesNameClien);
+        logger.info("Updated Equivalent table");
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});    
+    } catch (error) {
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
     }
 }
 
 export const generateAndGetEquivalencesTable = async (req: Request, res: Response) => {
     const { path_file } = req.body;
-    const filename = 'Tabla-Equivalencias';
-    logger.info("Reading XLSX codes to generate JSON and XLSX from equivalent table");
-    const path_ = await funct.doTable(path_file, filename);
-    logger.info("Created XLSX from equivalent table");
-    const realPath = path.resolve(path_);
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment;filename=${filename}.xlsx`);
-    res.sendFile(realPath);
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
+    try {
+        const filename = 'Tabla-Equivalencias';
+        logger.info("Reading XLSX codes to generate JSON and XLSX from equivalent table");
+        const path_ = await funct.doTable(path_file, filename);
+        logger.info("Created XLSX from equivalent table");
+        const realPath = path.resolve(path_);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment;filename=${filename}.xlsx`);
+        res.sendFile(realPath);
+    } catch (error) {
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
+    }
 }
 
 export const doCatalogueTable = async (req: Request, res: Response) => {
     const { path_file } = req.body;
-    const filename = 'Tabla-Equivalencias';
-    logger.info("Reading XLSX catalogue to generate JSON and XLSX from equivalent table");
-    const path_ = await funct.doCatalogueTable(path_file, filename);
-    logger.info("Created XLSX from equivalent table");
-    const realPath = path.resolve(path_);
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment;filename=${filename}.xlsx`);
-    res.sendFile(realPath);
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
+    try {
+        const filename = 'Tabla-Equivalencias';
+        logger.info("Reading XLSX catalogue to generate JSON and XLSX from equivalent table");
+        const path_ = await funct.doCatalogueTable(path_file, filename);
+        logger.info("Created XLSX from equivalent table");
+        const realPath = path.resolve(path_);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment;filename=${filename}.xlsx`);
+        res.sendFile(realPath);
+    } catch (error) {
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
+    }
 }
 
 export const generateTable = async (req: Request, res: Response) => {
-    const filename = 'Tabla-Equivalencias';
-    logger.info("Start generating XLSX from equivalent table");
-    const path_ = await funct.generateEquivalentTable(filename);
-    logger.info("Created XLSX from equivalent table");
-    const realPath = path.resolve(path_);
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment;filename=${filename}.xlsx`);
-    res.sendFile(realPath);
+    try {
+        const filename = 'Tabla-Equivalencias';
+        logger.info("Start generating XLSX from equivalent table");
+        const path_ = await funct.generateEquivalentTable(filename);
+        logger.info("Created XLSX from equivalent table");
+        const realPath = path.resolve(path_);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment;filename=${filename}.xlsx`);
+        res.sendFile(realPath);
+    } catch (error) {
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
+        res.status(500).json({msg: error.message});
+    }
 }

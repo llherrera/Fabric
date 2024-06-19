@@ -47,15 +47,17 @@ export class SiigoFormat {
     CLASIFICACION_2: string;
 
     constructor(
+        CODIGO_COMPROBANTE: number,
         CUENTA_CONTABLE: number,
         DEBITO_O_CREDITO: string,
         DESCRIPCION_DE_LA_SECUENCIA: string,
         CANTIDAD: number,
         CODIGO_DE_LA_BODEGA: number,
-        CLASIFICACION_1: string
+        CLASIFICACION_1: string,
+        CLASIFICACION_2?: string
     ) {
         this.TIPO_DE_COMPROBANTE = 'O';
-        this.CODIGO_COMPROBANTE = 1;
+        this.CODIGO_COMPROBANTE = CODIGO_COMPROBANTE;
         this.NUMERO_DE_DOCUMENTO = 0;
         this.CUENTA_CONTABLE = CUENTA_CONTABLE;
         this.DEBITO_O_CREDITO = DEBITO_O_CREDITO;
@@ -73,7 +75,7 @@ export class SiigoFormat {
         this.CANTIDAD = CANTIDAD ?? 0;
         this.CODIGO_DE_LA_BODEGA = CODIGO_DE_LA_BODEGA;
         this.CLASIFICACION_1 = CLASIFICACION_1;
-        this.CLASIFICACION_2 = '0';
+        this.CLASIFICACION_2 = CLASIFICACION_2 ?? '0';
     }
     setCodigosSiigo(desct: string, type: string) {
         const {linea_producto, grupo_producto, codigo_producto} = getCodesByName(desct, type);
@@ -81,19 +83,21 @@ export class SiigoFormat {
         this.GRUPO_PRODUCTO = parseInt(grupo_producto === '' ? '0' : grupo_producto);
         this.CODIGO_PRODUCTO = parseInt(codigo_producto === '' ? '0' : codigo_producto);
     }
-    setCodigoBodega(value: string) {
-        const pathfile = `uploads/${FILES_NAME.Bodegas}.json`;
-        const code = getCategoryCode(value, pathfile);
+    setCodigoBodega(value: string, type: string) {
+        const code = getCategoryCode(value, type);
         this.CODIGO_DE_LA_BODEGA = parseInt(code);
     }
-    setTalla(value: string) {
-        const pathfile = `uploads/${FILES_NAME.Tallas}.json`;
-        const code = getCategoryCode(value, pathfile);
+    setCodigoClient(value: string, type: string, aux_type: string) {
+        let code = getCategoryCode(value, type);
+        code === '0' ? code = getCategoryCode(value, aux_type) : null;
+        this.CODIGO_DE_LA_BODEGA = parseInt(code);
+    }
+    setTalla(value: string, type: string) {
+        const code = getCategoryCode(value, type);
         this.CLASIFICACION_1 = code;
     }
-    setColor(value: string) {
-        const pathfile = `uploads/${FILES_NAME.Colores}.json`;
-        const code = getCategoryCode(value, pathfile);
+    setColor(value: string, type: string) {
+        const code = getCategoryCode(value, type);
         this.CLASIFICACION_2 = code;
     }
 
