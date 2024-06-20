@@ -74,12 +74,12 @@ export const setOrderTallas = async (req: Request, res: Response) => {
 
 export const generateSiigoFormatO1 = async (req: Request, res: Response) => {
     const { ops, docNumber } = req.query;
-    if (docNumber === undefined) return res.status(400).json({ msg: `Bad Request. Missing doc's number field` });
+//    if (docNumber === undefined) return res.status(400).json({ msg: `Bad Request. Missing doc's number field` });
 //    if (ops === undefined) return res.status(400).json({ msg: `Bad Request. Missing production orders field` });
 
     try {
-        const ops_ = ops as string
-        const doc_number = parseInt(docNumber?.toString() === '' ? '1' : docNumber?.toString());
+        const ops_ = ops?.toString() ?? '';
+        const doc_number = parseInt(docNumber?.toString() ?? '1');
         let orders: string[] = ops_.split(',');
         orders = orders.filter(e => e !== '');
         orders.length > 0 && orders.forEach(item => {
@@ -118,11 +118,11 @@ export const setOrderProducts = async (req: Request, res: Response) => {
 
 export const generateSiigoFormatO2 = async (req: Request, res: Response) => {
     const { ops, docNumber } = req.query;
-    if (docNumber === undefined) return res.status(400).json({ msg: `Bad Request. Missing doc's number field` });
+//    if (docNumber === undefined) return res.status(400).json({ msg: `Bad Request. Missing doc's number field` });
 
     try {
-        const ops_ = ops as string
-        const doc_number = parseInt(docNumber?.toString() === '' ? '1' : docNumber?.toString());
+        const ops_ = ops?.toString() ?? '';
+        const doc_number = parseInt(docNumber?.toString() ?? '1');
         let orders: string[] = ops_.split(',');
         orders = orders.filter(e => e !== '');
         orders.length > 0 && orders.forEach(item => {

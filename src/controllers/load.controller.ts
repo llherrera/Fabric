@@ -68,7 +68,7 @@ export const generateTelasSiigoFile = async (req: Request, res: Response) => {
             return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de las telas, falta crear el fichero de telas de Lider.`});
         funct.addEquivalent(`uploads/${FILES_NAME.LiderTelas}.json`, `uploads/${FILES_NAME.SiigoTelas}.json`, FILES_NAME.CodesNameTelas, false);
         logger.info("Updated Equivalent table");
-        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
         res.status(500).json({msg: error.message});
@@ -144,6 +144,28 @@ export const generateTerminadoLiderFile = async (req: Request, res: Response) =>
     }
 }
 
+export const generateServicesLiderFile = async (req: Request, res: Response) => {
+    const { path_file } = req.body;
+    if (!path_file || path_file === '') {
+        logger.info(`File not found in path: ${path_file}`);
+        return res.status(400).json({ msg: 'Bad Request. Missing file field' });
+    }
+    let msg: string = '';
+    try {
+        logger.info("Start generating JSON with 'Servicios' codes in Lider");
+        await funct.readFileToGenerateJsonFile(path_file, 1, 6, 4, FILES_NAME.LiderServi);
+        logger.info("Created JSON with 'Servicios' codes in Lider");
+        msg = 'Se ha creado el fichero de servicios de Lider';
+        //funct.addEquivalent(`uploads/${FILES_NAME.LiderProds}.json`, `uploads/${FILES_NAME.SiigoProds}.json`, FILES_NAME.CodesNameProds, true);
+        funct.addCatalogue(`uploads/${FILES_NAME.LiderServi}.json`, FILES_NAME.CodesNameServi);
+        logger.info("Updated Equivalent table");
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
+    } catch (error) {
+        logger.error(`Error: ${error.message}`, { stack: error.stack });
+        res.status(500).json({msg: error.message});
+    }
+}
+
 export const generateTallasFile = async (req: Request, res: Response) => {
     const { path_file } = req.body;
     if (!path_file || path_file === '') {
@@ -158,7 +180,7 @@ export const generateTallasFile = async (req: Request, res: Response) => {
         msg = 'Se ha creado el fichero de Tallas';
         funct.addCatalogue(`uploads/${FILES_NAME.Tallas}.json`, FILES_NAME.CodesNameTalla);
         logger.info("Updated Equivalent table");
-        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});    
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});    
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
         res.status(500).json({msg: error.message});
@@ -179,7 +201,7 @@ export const generateColoresFile = async (req: Request, res: Response) => {
         msg = 'Se ha creado el fichero de Colores';
         funct.addCatalogue(`uploads/${FILES_NAME.Colores}.json`, FILES_NAME.CodesNamecolor);
         logger.info("Updated Equivalent table");
-        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});    
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});    
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
         res.status(500).json({msg: error.message});
@@ -200,7 +222,7 @@ export const generateBodegasFile = async (req: Request, res: Response) => {
         msg = 'Se ha creado el fichero de Bodegas';
         funct.addCatalogue(`uploads/${FILES_NAME.Bodegas}.json`, FILES_NAME.CodesNameBodeg);
         logger.info("Updated Equivalent table");
-        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});    
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});    
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
         res.status(500).json({msg: error.message});
@@ -221,7 +243,7 @@ export const generateProcessFile = async (req: Request, res: Response) => {
         msg = 'Se ha creado el fichero de Procesos';
         funct.addCatalogue(`uploads/${FILES_NAME.Procesos}.json`, FILES_NAME.CodesNameProce);
         logger.info("Updated Equivalent table");
-        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});    
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});    
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
         res.status(500).json({msg: error.message});
@@ -242,7 +264,7 @@ export const generateClientFile = async (req: Request, res: Response) => {
         msg = 'Se ha creado el fichero de Clientes';
         funct.addCatalogue(`uploads/${FILES_NAME.Clientes}.json`, FILES_NAME.CodesNameClien);
         logger.info("Updated Equivalent table");
-        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias`});    
+        res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});    
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
         res.status(500).json({msg: error.message});

@@ -1,18 +1,21 @@
 import ExcelJS, { Row, Cell } from 'exceljs';
 import fs from 'fs';
+import 'dotenv/config';
 import { JSONInterface, JSONInterfaceData, JSONInterfaceExcel, JSONEquivalencia, ResponseCodesByName, SiigoFormat, JSONInterfaceFormat } from "../interfaces/index";
-import { FILES_NAME, regParentesis } from "../utils/constants";
+import { FILES_NAME, regParentesis, regReferencia } from "../utils/constants";
 import { logger } from '../utils/logger.utils';
 import { NError } from '../utils/errors.utils';
-
+               
 const dc = require('dice-coefficient');
 
-const codigosProcesos: {[key:string]:number[]} = {
-    "BORDADOS": [2, 15, 6],
-    "ESTAMPADOS": [2, 0, 0],
-    "CONFECCION": [2, 12, 2],
-    "LAVANDERIA": [2, 11, 3],
-}
+const CInsumos    = parseInt(process.env.CUENTA_INSUMOS    || '0000000000');
+const CTelas      = parseInt(process.env.CUENTA_TELAS      || '0000000000');
+const CConfeccion = parseInt(process.env.CUENTA_CONFECCION || '0000000000');
+const CBordados   = parseInt(process.env.CUENTA_BORDADOS   || '0000000000');
+const CLavanderia = parseInt(process.env.CUENTA_LAVANDERIA || '0000000000');
+const CEstampado  = parseInt(process.env.CUENTA_ESTAMPADO  || '0000000000');
+const CProceso    = parseInt(process.env.CUENTA_PROCESO    || '0000000000');
+const CTerminado  = parseInt(process.env.CUENTA_TERMINADO  || '0000000000');
 
 /*  los parametros de la función 
     path:        la ruta del fichero xlsx de donde se obtiene la información para el JSON
@@ -65,6 +68,8 @@ export const readFileToGenerateJsonFile = async (path: string, row_: number, she
                 if (colNumber !== key) {
                     logger.info(`Reading ${rowNumber}:${colNumber}`);
                     let fieldName = worksheet.getRow(rowNumber).getCell(key).value?.toString() ?? `EMPTY_${key}`;
+                    let fieldNameC = fieldName.match(regReferencia);
+                    (fieldNameC && filename === FILES_NAME.SiigoProds) ? fieldName = fieldNameC[0] : fieldName = fieldName;
                     fieldName = fieldName.trim();
                     let value = (cell.value?.toString() ?? '').trim();
                     value = value === '[object Object]' ? `${temp[colNumber-3]}-${temp[colNumber-2]}` : value;
@@ -78,7 +83,7 @@ export const readFileToGenerateJsonFile = async (path: string, row_: number, she
     });
     fs.writeFileSync(`./uploads/${filename}.json`, JSON.stringify(jsonData));
     logger.info(`JSON file created`);
-    delete_file ? fs.unlinkSync(path) : null;
+    //delete_file ? fs.unlinkSync(path) : null;
 }
 
 /*
@@ -118,7 +123,7 @@ export const readInputFile = async (path: string, filename: string, rowStart: nu
         }
     });
     fs.writeFileSync(`uploads/${filename}.json`, JSON.stringify(jsonData));
-    fs.unlinkSync(path);
+    //fs.unlinkSync(path);
     logger.info(`JSON file created`);
 }
 
@@ -239,9 +244,14 @@ export const getCategoryCode = (value: string, type: string) => {
     return linea_producto;
 }
 
+export const getServiceCode = (value: string, type: string) => {
+    const { linea_producto, grupo_producto, codigo_producto } = getCodesByName(value, type);
+    return [linea_producto, grupo_producto, codigo_producto];
+}
+
 const getSiigoCode = (key_lider: string, file_siigo: JSONInterface, isCode: boolean) => {
     let key_field = key_lider.replace(/  +/g, " ");
-    key_field = isCode ? key_lider : key_field.replace(/[0-9]{1,4} ?(- ?[0-9]{1,4}){1,2} ?/g, "");
+    key_field = isCode ? key_lider : key_field.replace(regReferencia, "");
     key_field = key_field.replace(/%[a-zA-Z]/g, (match) => match.replace('%', '% '));
     key_field = key_field.replace(/[a-zA-Z]\(/g, (match) => match.replace('(', '( '));
     key_field = key_field.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -255,7 +265,7 @@ const getSiigoCode = (key_lider: string, file_siigo: JSONInterface, isCode: bool
 
     let maxAssertion = 0, maxAssertionT = 0, maxKey = '';
     for (const key in file_siigo) {
-        let key_ = isCode ? file_siigo[key][3] : key;
+        let key_ = key;
         key_ = key_.replace(/%[a-zA-Z]/g, (match) => match.replace('%', '% '));
         key_ = key_.replace(/[a-zA-Z]\(/g, (match) => match.replace('(', '( '));
         key_ = key_.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -321,15 +331,11 @@ const doDataToFormat1 = () => {
             logger.info(`Register has 'Descripcion'`);
             const color = items[i]['COLOR'];
             logger.info(`Register has 'COLOR'`);
-            const refer = items[i]['REF LIDER'];
-            logger.info(`Register has 'REF LIDER'`);
-            const taler = items[i]['Taller'];
-            logger.info(`Register has 'Taller'`);
             const canti = parseFloat(items[i]['Cantidad Insumos Retirados']);
             logger.info(`Register has 'Cantidad Insumos Retirados'`);
             let register = new SiigoFormat(
                 1,
-                1405053300,
+                CInsumos,
                 'C',
                 desct,
                 canti,
@@ -366,7 +372,7 @@ const doDataToFormat1 = () => {
             logger.info(`Register has 'Cantidad'`);
             let register = new SiigoFormat(
                 1,
-                1405053100,
+                CTelas,
                 'C',
                 desct,
                 canti,
@@ -397,6 +403,7 @@ const doDataToFormat1 = () => {
 
 const doDataToFormat2 = () => {
     const processData: JSONInterfaceExcel = JSON.parse(fs.readFileSync(`uploads/${FILES_NAME.CreditosProcesos}.json`, 'utf-8'));
+    const producLider: JSONInterface = JSON.parse(fs.readFileSync(`uploads/${FILES_NAME.SiigoProds}.json`, 'utf-8'));
     let coleccion = new Map<string, SiigoFormat[]>();
     logger.info(`Reading 'Productos en proceso' JSON file`);
     for (const op in processData) {
@@ -414,7 +421,7 @@ const doDataToFormat2 = () => {
 
             let register = new SiigoFormat(
                 2,
-                1410053100,
+                CProceso,
                 'C',
                 `OP ${op}`,
                 ingresInt,
@@ -444,6 +451,8 @@ const doDataToFormat2 = () => {
         const item = items[0];
         const procesos = item['Procesos'];
         const cantxpro = item['Cant_X_proceso'];
+        let refItem = item['Referencia Producto Terminado'];
+        refItem = refItem !== undefined ? refItem.replaceAll('-', ' - ') : refItem;
         let procesosSp = procesos.split(',');
         let cantxproSp = cantxpro.split(/[,.]/);
         if (procesosSp.length !== cantxproSp.length) throw new NError(400, {format: true}, `'Procesos' and 'Cant_X_proceso' do not match`);
@@ -460,19 +469,39 @@ const doDataToFormat2 = () => {
             procesoi = procesoi.replace('Post-','');
             procesoi = procesoi.replace('Pre-','');
             procesoi = procesoi.trim();
-            let cuenta = 0;
+            let cuenta = 0, linea: number, grupo: number, codigo: number;
+            let confLava: string[] = [];
+            let temp;
+            if (producLider[refItem] !== undefined)
+                confLava = producLider[refItem][4].split(',');
             switch (procesoi) {
                 case 'CONFECCION':
-                    cuenta = 1410103200;
+                    cuenta = CConfeccion;
+                    temp = getServiceCode(confLava[0], FILES_NAME.CodesNameServi);
+                    linea  = parseInt(temp[0]);
+                    grupo  = parseInt(temp[1]);
+                    codigo = parseInt(temp[2]);
                     break;
                 case 'BORDADOS':
-                    cuenta = 1410103300;
+                    cuenta = CBordados;
+                    temp = getServiceCode(procesoi, FILES_NAME.CodesNameServi);
+                    linea  = parseInt(temp[0]);
+                    grupo  = parseInt(temp[1]);
+                    codigo = parseInt(temp[2]);
                     break;
                 case 'LAVANDERIA':
-                    cuenta = 1410103400;
+                    cuenta = CLavanderia;
+                    temp = getServiceCode(confLava[1], FILES_NAME.CodesNameServi);
+                    linea  = parseInt(temp[0]);
+                    grupo  = parseInt(temp[1]);
+                    codigo = parseInt(temp[2]);
                     break;
                 case 'ESTAMPADOS':
-                    cuenta = 0;
+                    cuenta = CEstampado;
+                    temp = getServiceCode(procesoi, FILES_NAME.CodesNameServi);
+                    linea  = parseInt(temp[0]);
+                    grupo  = parseInt(temp[1]);
+                    codigo = parseInt(temp[2]);
                     break;
                 default:
                     throw new NError(404, {format:true}, `This process ${procesosSp[i]} do not exits in the system`);
@@ -488,10 +517,9 @@ const doDataToFormat2 = () => {
                 "",
                 ""
             );
-            register.setLineaProducto(2);
-            register.setGrupoProducto(codigosProcesos[procesoi][1]);
-            register.setCodigoProducto(codigosProcesos[procesoi][2]);
-            logger.info(`Register has Siigo codes`);
+            register.setLineaProducto(linea);
+            register.setGrupoProducto(grupo);
+            register.setCodigoProducto(codigo);
             register.setCodigoBodega(procesoi, FILES_NAME.CodesNameProce);
             logger.info(`Register has 'Bodega' codes`);
             if (coleccion.has(op)) {
@@ -517,7 +545,7 @@ const doDataToFormat2 = () => {
             const ingresInt = parseInt(ingreso);
             let register = new SiigoFormat(
                 2,
-                1430053100,
+                CTerminado,
                 'D',
                 `OP ${op}`,
                 ingresInt,
@@ -607,7 +635,7 @@ const doDebit1 = () => {
                 '100'
             );
             register.setSecuencia(secuencia);
-            register.setCodigosSiigo(ref, 'Códigos Terminados');
+            register.setCodigosSiigo(ref, FILES_NAME.CodesNameProds);
             logger.info(`Register has Siigo codes`);
             register.setCodigoBodega(taller, FILES_NAME.CodesNameBodeg);
             logger.info(`Register has 'Bodega`);
@@ -849,7 +877,7 @@ export const getCodesByName = (description: string, type: string): ResponseCodes
     const tablaEqui: JSONEquivalencia = JSON.parse(fs.readFileSync('uploads/equivalencias.json', 'utf-8'));
     try {
         let values = tablaEqui[type][description];
-        if (values === undefined) throw new Error('undefined')
+        if (values === undefined) throw new Error('undefined');
         linea_producto = (values !== undefined || values[0] !== '') ? values[0] : '0';
         grupo_producto = (values !== undefined || values[1] !== '') ? values[1] : '0';
         codigo_producto = (values !== undefined || values[2] !== '') ? values[2] : '0';
@@ -880,18 +908,27 @@ export const getCodesByName = (description: string, type: string): ResponseCodes
             case FILES_NAME.CodesNameClien:
                 path = `uploads/${FILES_NAME.Clientes}.json`;
                 break;
+            case FILES_NAME.CodesNameServi:
+                path = `uploads/${FILES_NAME.LiderServi}.json`;
+                break;
             default:
                 path = '';
                 break;
         }
         const siigo = JSON.parse(fs.readFileSync(path, 'utf-8'));
-        let values = getSiigoCode(description, siigo, type === FILES_NAME.CodesNameProds);
-        linea_producto = (values !== undefined || values[0] !== '') ? values[0] : '0';
-        grupo_producto = (values !== undefined || values[1] !== '') ? values[1] : '0';
-        codigo_producto = (values !== undefined || values[2] !== '') ? values[2] : '0';
-        tablaEqui[type][description] = values;
-        fs.writeFileSync(`uploads/equivalencias.json`, JSON.stringify(tablaEqui));
-        logger.info(`Equivalent JSON file updated`);
+        if (description !== undefined) {
+            let values = getSiigoCode(description, siigo, type === FILES_NAME.CodesNameProds);
+            linea_producto = (values !== undefined || values[0] !== '') ? values[0] : '0';
+            grupo_producto = (values !== undefined || values[1] !== '') ? values[1] : '0';
+            codigo_producto = (values !== undefined || values[2] !== '') ? values[2] : '0';
+            tablaEqui[type][description] = values;
+            fs.writeFileSync(`uploads/equivalencias.json`, JSON.stringify(tablaEqui));
+            logger.info(`Equivalent JSON file updated`);
+        } else {
+            linea_producto = '0';
+            grupo_producto = '0';
+            codigo_producto = '0';
+        }
     }
     return {linea_producto, grupo_producto, codigo_producto};
 }

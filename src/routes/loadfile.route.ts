@@ -17,6 +17,8 @@ router.post(Path.LiderIns, fileManager, controller.generateInsumoLiderFile);
 router.post(Path.LiderTel, fileManager, controller.generateTelasLiderFile);
 router.post(Path.LiderPro, fileManager, controller.generateTerminadoLiderFile);
 
+router.post(Path.LiderSer, fileManager, controller.generateServicesLiderFile);
+
 router.post(Path.Tallas,  fileManager, controller.generateTallasFile);
 router.post(Path.Colors,  fileManager, controller.generateColoresFile);
 router.post(Path.Bodega,  fileManager, controller.generateBodegasFile);

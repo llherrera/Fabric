@@ -1,4 +1,5 @@
 export const regParentesis = /^(.*)\((.*)\)$/;
+export const regReferencia = /^\d+(?:\s*-\s*\d+)*\b/;
 
 export const Path = {
     Base:       '/',
@@ -12,6 +13,7 @@ export const Path = {
     LiderIns:   '/insumos-lider',
     LiderTel:   '/telas-lider',
     LiderPro:   '/productos-lider',
+    LiderSer:   '/servicios-lider',
     Tallas:     '/tallas',
     Colors:     '/colores',
     Bodega:     '/bodegas',
@@ -40,6 +42,7 @@ export const FILES_NAME = {
     SiigoTelas: 'telas_siigo',
     LiderInsum: 'insumos_lider',
     SiigoInsum: 'insumos_siigo',
+    LiderServi: 'servicios_lider',
 
     CodesNameInsum: 'Códigos Insumos',
     CodesNameTelas: 'Códigos Telas',
@@ -49,6 +52,7 @@ export const FILES_NAME = {
     CodesNameBodeg: 'Códigos Bodegas',
     CodesNameProce: 'Códigos Procesos',
     CodesNameClien: 'Códigos Clientes',
+    CodesNameServi: 'Códigos Servicios',
 
     CreditosInsumos:     'productosInsumos',
     CreditosTelas:       'productosTelas',
