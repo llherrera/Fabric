@@ -4,7 +4,6 @@ module.exports = {
         script : "dist/index.js",
         watch: false,
         max_memory_restart: '1024M',
-        instances: 1,
-        cron_restart: '59 23 * * *'
+        instances: 1
     }]
 }
