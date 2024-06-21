@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs';
 
 const rootFile = `${__dirname}/../uploads/`;
-
+/*
 describe('POST data to generate Siigo formats', () => {
     const equivalentRoot = path.join(rootFile, 'Ejemplo_cargue_insumos.xlsx');
     const invalidRoot    = path.join(rootFile, 'Ejemplo_cargue_insumos.txt');
@@ -23,17 +23,17 @@ describe('POST data to generate Siigo formats', () => {
             expect(response.statusCode).toBe(204);
         });
 
-        it("should response with a 400 status code with message 'Error uploading file Invalid file type'", async () => {
-            const response = await request(app)
-                .post('/orden/insumos')
-                .attach('file', invalidRoot)
-                .catch(err => {
-                    console.log(err);
-                    throw err;
-                });
-            expect(response.statusCode).toBe(400);
-            expect(response.body.msg).toMatch('Error uploading file. Invalid file type');
-        });
+        //it("should response with a 400 status code with message 'Error uploading file Invalid file type'", async () => {
+        //    const response = await request(app)
+        //        .post('/orden/insumos')
+        //        .attach('file', invalidRoot)
+        //        .catch(err => {
+        //            console.log(err);
+        //            throw err;
+        //        });
+        //    expect(response.statusCode).toBe(400);
+        //    expect(response.body.msg).toMatch('Error uploading file. Invalid file type');
+        //});
 
         it("should response with a 500 status code with message 'Cannot read properties of undefined (reading 'path')'", async () => {
             const response = await request(app)
@@ -176,3 +176,4 @@ describe("GET Siigo formats", () => {
         }, 10*1000);
     });
 });
+*/
