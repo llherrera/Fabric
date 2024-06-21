@@ -70,12 +70,13 @@ export const readFileToGenerateJsonFile = async (path: string, row_: number, she
                     let fieldName = worksheet.getRow(rowNumber).getCell(key).value?.toString() ?? `EMPTY_${key}`;
                     let fieldNameC = fieldName.match(regReferencia);
                     (fieldNameC && filename === FILES_NAME.SiigoProds) ? fieldName = fieldNameC[0] : fieldName = fieldName;
+                    fieldName = fieldName.replace('TALLA', '');
                     fieldName = fieldName.trim();
                     let value = (cell.value?.toString() ?? '').trim();
                     value = value === '[object Object]' ? `${temp[colNumber-3]}-${temp[colNumber-2]}` : value;
                     logger.info(`Fieldname: ${fieldName} value: ${value}`);
                     temp.push(value);
-                    rowData[fieldName] = temp;
+                    fieldName !== 'UNICA' ? rowData[fieldName] = temp : null;
                 }
             });
             jsonData = { ...jsonData,...rowData};
@@ -173,10 +174,12 @@ export const doTable = async (path: string, filename: string) => {
     await readFileToGenerateJsonFile(path, 1, 2, 4, FILES_NAME.SiigoTelas, false);
     await readFileToGenerateJsonFile(path, 1, 3, 1, FILES_NAME.LiderTelas, false);
     await readFileToGenerateJsonFile(path, 1, 4, 5, FILES_NAME.SiigoProds, false);
-    await readFileToGenerateJsonFile(path, 1, 5, 1, FILES_NAME.LiderProds);
+    await readFileToGenerateJsonFile(path, 1, 5, 1, FILES_NAME.LiderProds, false);
+    await readFileToGenerateJsonFile(path, 1, 6, 4, FILES_NAME.LiderServi);
     addEquivalent(`uploads/${FILES_NAME.LiderInsum}.json`, `uploads/${FILES_NAME.SiigoInsum}.json`, FILES_NAME.CodesNameInsum, false);
     addEquivalent(`uploads/${FILES_NAME.LiderTelas}.json`, `uploads/${FILES_NAME.SiigoTelas}.json`, FILES_NAME.CodesNameTelas, false);
     addEquivalent(`uploads/${FILES_NAME.LiderProds}.json`, `uploads/${FILES_NAME.SiigoProds}.json`, FILES_NAME.CodesNameProds, true);
+    addCatalogue(`uploads/${FILES_NAME.LiderServi}.json`, FILES_NAME.CodesNameServi);
     const name = await generateEquivalentTable(filename);
     return name;
 }
@@ -184,10 +187,14 @@ export const doTable = async (path: string, filename: string) => {
 export const doCatalogueTable = async (path: string, filename: string) => {
     await readFileToGenerateJsonFile(path, 7, 0, 2, FILES_NAME.Tallas, false);
     await readFileToGenerateJsonFile(path, 7, 1, 2, FILES_NAME.Colores, false);
-    await readFileToGenerateJsonFile(path, 7, 2, 2, FILES_NAME.Bodegas);
+    await readFileToGenerateJsonFile(path, 7, 2, 2, FILES_NAME.Bodegas, false);
+    await readFileToGenerateJsonFile(path, 1, 3, 2, FILES_NAME.Procesos, false);
+    await readFileToGenerateJsonFile(path, 1, 4, 2, FILES_NAME.Clientes);
     addCatalogue(`uploads/${FILES_NAME.Tallas}.json`, FILES_NAME.CodesNameTalla);
     addCatalogue(`uploads/${FILES_NAME.Colores}.json`, FILES_NAME.CodesNamecolor);
     addCatalogue(`uploads/${FILES_NAME.Bodegas}.json`, FILES_NAME.CodesNameBodeg);
+    addCatalogue(`uploads/${FILES_NAME.Procesos}.json`, FILES_NAME.CodesNameProce);
+    addCatalogue(`uploads/${FILES_NAME.Clientes}.json`, FILES_NAME.CodesNameClien);
     const name = await generateEquivalentTable(filename);
     return name;
 }
@@ -409,6 +416,7 @@ const doDataToFormat2 = () => {
     for (const op in processData) {
         const items = processData[op];
         let cantxprocSum = 0;
+        let secuencia = 1;
         for (let i = 0; i < items.length; i++) {
             logger.info(`Making product on process register`);
             const taller    = items[i]['Taller'];
@@ -439,15 +447,16 @@ const doDataToFormat2 = () => {
             register.setCodigoBodega(taller, FILES_NAME.CodesNameBodeg);
             logger.info(`Register has 'Bodega'`);
             if (coleccion.has(op)) {
-                register.setSecuencia(1);
+                register.setSecuencia(secuencia);
                 coleccion.get(op)?.push(register);
                 logger.info(`Added product on process register to OP ${op}`);
             } else {
-                register.setSecuencia(1);
+                register.setSecuencia(secuencia);
                 coleccion.set(op, [register]);
                 logger.info(`Added product on process register to OP ${op}`);
             }
         }
+        secuencia = secuencia + 1;
         const item = items[0];
         const procesos = item['Procesos'];
         const cantxpro = item['Cant_X_proceso'];
@@ -523,21 +532,20 @@ const doDataToFormat2 = () => {
             register.setCodigoBodega(procesoi, FILES_NAME.CodesNameProce);
             logger.info(`Register has 'Bodega' codes`);
             if (coleccion.has(op)) {
-                register.setSecuencia(i + 2);
-                register.setSecuencia(1);
+                register.setSecuencia(secuencia);
                 coleccion.get(op)?.push(register);
                 logger.info(`Added process register to OP ${op}`);
             } else {
-                register.setSecuencia(1);
+                register.setSecuencia(secuencia);
                 coleccion.set(op, [register]);
                 logger.info(`Added process register to OP ${op}`);
             }
+            secuencia = secuencia + 1;
         }
-        const len = items.length + 1;
         logger.info(`Doing debit data to Siigo format`);
         for (let i = 0; i < items.length; i++) {
             logger.info(`Making product on process register`);
-            const taller    = items[i]['Taller'];
+            const cliente   = items[i]['Cliente'];
             const color     = items[i]['Color'];
             const ref       = items[i]['Referencia Producto Terminado'];
             const talla     = items[i]['Talla'];            
@@ -560,14 +568,14 @@ const doDataToFormat2 = () => {
             logger.info(`Register has Color code`);
             register.setTalla(talla, FILES_NAME.CodesNameTalla);
             logger.info(`Register has 'Talla'`);
-            register.setCodigoClient(taller, FILES_NAME.CodesNameClien, FILES_NAME.CodesNameBodeg);
+            register.setCodigoClient(cliente, FILES_NAME.CodesNameClien, FILES_NAME.CodesNameBodeg);
             logger.info(`Register has 'Client'`);
             if (coleccion.has(op)) {
-                register.setSecuencia(len);
+                register.setSecuencia(secuencia);
                 coleccion.get(op)?.push(register);
                 logger.info(`Added product on process register to OP ${op}`);
             } else {
-                register.setSecuencia(1);
+                register.setSecuencia(secuencia);
                 coleccion.set(op, [register]);
                 logger.info(`Added product on process register to OP ${op}`);
             }
@@ -772,18 +780,11 @@ const getPropertyFormatByOP = (op: string, property: string) => {
     return '';
 }
 
-export const generateDataToFormat1 = async (filename: string, orders: string[], docNumber: number) => {
+const doExcel = (data: JSONInterfaceFormat, orders: string[], i: number, type: number): ExcelJS.Workbook => {
     const workbook = new ExcelJS.Workbook();
-    logger.info(`Doing credit data to Siigo format`);
-    let pathData = doDataToFormat1();
-    logger.info(`Doing debit data to Siigo format`);
-    pathData = doDebit1();
-    const data: JSONInterfaceFormat = JSON.parse(fs.readFileSync(pathData, 'utf-8'));
-
-    let worksheet = workbook.addWorksheet(`O1-i`);
+    let worksheet = workbook.addWorksheet(`O${type}`);
     worksheet = doExcelStyleSiigo(worksheet);
-    let i = docNumber;
-    logger.info(`Generating xlsx data`);
+
     for (const key in data) {
         if (orders.length === 0 || orders.includes(key)) {
             let orden_i = data[key];
@@ -817,6 +818,19 @@ export const generateDataToFormat1 = async (filename: string, orders: string[], 
             i = i + 1;
         }
     }
+
+    return workbook;
+}
+
+export const generateDataToFormat1 = async (filename: string, orders: string[], docNumber: number) => {
+    logger.info(`Doing credit data to Siigo format`);
+    let pathData = doDataToFormat1();
+    logger.info(`Doing debit data to Siigo format`);
+    pathData = doDebit1();
+    const data: JSONInterfaceFormat = JSON.parse(fs.readFileSync(pathData, 'utf-8'));
+    let i = docNumber;
+    logger.info(`Generating xlsx data`);
+    const workbook = doExcel(data, orders, i, 1);
     logger.info(`Generated xlsx`);
     const name = `uploads/${filename}.xlsx`
     await workbook.xlsx.writeFile(name);
@@ -824,48 +838,12 @@ export const generateDataToFormat1 = async (filename: string, orders: string[], 
 }
 
 export const generateDataToFormat2 = async (filename: string, orders: string[], docNumber: number) => {
-    const workbook = new ExcelJS.Workbook();
     logger.info(`Doing credit data to Siigo format`);
     let pathData = doDataToFormat2();
     const data: JSONInterfaceFormat = JSON.parse(fs.readFileSync(pathData, 'utf-8'));
-
-    let worksheet = workbook.addWorksheet(`O1-i`);
-    worksheet = doExcelStyleSiigo(worksheet);
     let i = docNumber;
     logger.info(`Generating xlsx data`);
-    for (const key in data) {
-        if (orders.length === 0 || orders.includes(key)) {
-            let orden_i = data[key];
-            for (let j = 0; j < orden_i.length; j++) {
-                const row = worksheet.addRow([
-                    orden_i[j].TIPO_DE_COMPROBANTE,
-                    orden_i[j].CODIGO_COMPROBANTE,
-                    i,
-                    orden_i[j].CUENTA_CONTABLE,
-                    orden_i[j].DEBITO_O_CREDITO,
-                    orden_i[j].VALOR_DE_LA_SECUENCIA,
-                    orden_i[j].ANNO_DEL_DOCUMENTO,
-                    orden_i[j].MES_DEL_DOCUMENTO,
-                    orden_i[j].DIA_DEL_DOCUMENTO,
-                    orden_i[j].SECUENCIA,
-                    orden_i[j].CENTRO_DE_COSTO,
-                    orden_i[j].NIT,
-                    orden_i[j].DESCRIPCION_DE_LA_SECUENCIA,
-                    orden_i[j].LINEA_PRODUCTO,
-                    orden_i[j].GRUPO_PRODUCTO,
-                    orden_i[j].CODIGO_PRODUCTO,
-                    orden_i[j].CANTIDAD,
-                    orden_i[j].CODIGO_DE_LA_BODEGA,
-                    orden_i[j].CLASIFICACION_1,
-                    orden_i[j].CLASIFICACION_2,
-                ]);
-                row.eachCell({includeEmpty: true}, (cell: Cell) => {
-                    cell.border = {bottom: {style: 'thin'}, right: {style: 'thin'}};
-                });
-            }
-            i = i + 1;
-        }
-    }
+    const workbook = doExcel(data, orders, i, 2);
     logger.info(`Generated xlsx`);
     const name = `uploads/${filename}.xlsx`
     await workbook.xlsx.writeFile(name);
@@ -912,8 +890,7 @@ export const getCodesByName = (description: string, type: string): ResponseCodes
                 path = `uploads/${FILES_NAME.LiderServi}.json`;
                 break;
             default:
-                path = '';
-                break;
+                throw new NError(404, {format:true}, `The equivalent table do not have ${type} type register`);
         }
         const siigo = JSON.parse(fs.readFileSync(path, 'utf-8'));
         if (description !== undefined) {

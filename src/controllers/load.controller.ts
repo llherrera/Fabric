@@ -25,6 +25,8 @@ export const generateInsumosSiigoFile = async (req: Request, res: Response) => {
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -48,6 +50,8 @@ export const generateInsumoLiderFile = async (req: Request, res: Response) => {
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -71,6 +75,8 @@ export const generateTelasSiigoFile = async (req: Request, res: Response) => {
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -94,6 +100,8 @@ export const generateTelasLiderFile = async (req: Request, res: Response) => {
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -117,6 +125,8 @@ export const generateTerminadoSiigoFile = async (req: Request, res: Response) =>
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -140,6 +150,8 @@ export const generateTerminadoLiderFile = async (req: Request, res: Response) =>
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -156,12 +168,13 @@ export const generateServicesLiderFile = async (req: Request, res: Response) => 
         await funct.readFileToGenerateJsonFile(path_file, 1, 6, 4, FILES_NAME.LiderServi);
         logger.info("Created JSON with 'Servicios' codes in Lider");
         msg = 'Se ha creado el fichero de servicios de Lider';
-        //funct.addEquivalent(`uploads/${FILES_NAME.LiderProds}.json`, `uploads/${FILES_NAME.SiigoProds}.json`, FILES_NAME.CodesNameProds, true);
         funct.addCatalogue(`uploads/${FILES_NAME.LiderServi}.json`, FILES_NAME.CodesNameServi);
         logger.info("Updated Equivalent table");
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -183,6 +196,8 @@ export const generateTallasFile = async (req: Request, res: Response) => {
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});    
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -204,6 +219,8 @@ export const generateColoresFile = async (req: Request, res: Response) => {
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});    
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -225,6 +242,8 @@ export const generateBodegasFile = async (req: Request, res: Response) => {
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});    
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -246,6 +265,8 @@ export const generateProcessFile = async (req: Request, res: Response) => {
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});    
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -267,6 +288,8 @@ export const generateClientFile = async (req: Request, res: Response) => {
         res.status(200).json({msg: `${msg}. Se ha actualizado la tabla de equivalencias.`});    
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -288,6 +311,8 @@ export const generateAndGetEquivalencesTable = async (req: Request, res: Respons
         res.sendFile(realPath);
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }
@@ -309,6 +334,8 @@ export const doCatalogueTable = async (req: Request, res: Response) => {
         res.sendFile(realPath);
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         res.status(500).json({msg: error.message});
     }
 }

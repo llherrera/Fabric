@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 import * as funct from "../utils/functions.utils";
 import { FILES_NAME } from "../utils/constants";
 import path from "path";
-import { logger } from '../utils/logger.utils';
+import { logger } from '../utils/logger.utils'
+import { NError } from '../utils/errors.utils';;
 
 export const setOrderInsumos = async (req: Request, res: Response) => {
     const { path_file } = req.body;
@@ -17,6 +18,8 @@ export const setOrderInsumos = async (req: Request, res: Response) => {
         res.status(204).json();
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         return res.status(500).json({ msg: error.message });
     }
 }
@@ -34,6 +37,8 @@ export const setOrderTelas = async (req: Request, res: Response) => {
         res.status(204).json();
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         return res.status(500).json({ msg: error.message });
     }
 }
@@ -51,6 +56,8 @@ export const setOrderTerminados = async (req: Request, res: Response) => { // no
         res.status(204).json();
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         return res.status(500).json({ msg: error.message });
     }
 }
@@ -68,15 +75,14 @@ export const setOrderTallas = async (req: Request, res: Response) => {
         res.status(204).json();
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         return res.status(500).json({ msg: error.message });
     }
 }
 
 export const generateSiigoFormatO1 = async (req: Request, res: Response) => {
     const { ops, docNumber } = req.query;
-//    if (docNumber === undefined) return res.status(400).json({ msg: `Bad Request. Missing doc's number field` });
-//    if (ops === undefined) return res.status(400).json({ msg: `Bad Request. Missing production orders field` });
-
     try {
         const ops_ = ops?.toString() ?? '';
         const doc_number = parseInt(docNumber?.toString() ?? '1');
@@ -95,6 +101,8 @@ export const generateSiigoFormatO1 = async (req: Request, res: Response) => {
         res.sendFile(realPath);
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         return res.status(500).json({ msg: error.message });
     }
 }
@@ -112,14 +120,14 @@ export const setOrderProducts = async (req: Request, res: Response) => {
         res.status(204).json();
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         return res.status(500).json({ msg: error.message });
     }
 }
 
 export const generateSiigoFormatO2 = async (req: Request, res: Response) => {
     const { ops, docNumber } = req.query;
-//    if (docNumber === undefined) return res.status(400).json({ msg: `Bad Request. Missing doc's number field` });
-
     try {
         const ops_ = ops?.toString() ?? '';
         const doc_number = parseInt(docNumber?.toString() ?? '1');
@@ -138,6 +146,8 @@ export const generateSiigoFormatO2 = async (req: Request, res: Response) => {
         res.sendFile(realPath);
     } catch (error) {
         logger.error(`Error: ${error.message}`, { stack: error.stack });
+        if (error instanceof NError)
+            res.status(error.code).json({msg: error.message});
         return res.status(500).json({ msg: error.message });
     }
 }
