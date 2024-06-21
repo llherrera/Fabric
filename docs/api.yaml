@@ -47,18 +47,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
         '404':
           description: Not Found
           content:
@@ -100,18 +88,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
         '404':
           description: Not Found
           content:
@@ -160,18 +136,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
         '404':
           description: Not Found
           content:
@@ -220,18 +184,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
         '404':
           description: Not Found
           content:
@@ -280,18 +232,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
         '404':
           description: Not Found
           content:
@@ -340,18 +280,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
         '404':
           description: Not Found
           content:
@@ -400,18 +328,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
         '404':
           description: Not Found
           content:
@@ -460,18 +376,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
+        '404':
+          description: Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403'
+                $ref: '#/components/schemas/Error500'
+  /cargar/servicios-lider:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los servicios según Lider.
+      description: Permite subir la información de los servicios en la que se relacionan con los codigos de Siigo en la base de datos de Lider por medio de Excel al sistema.
+      operationId: loadServiciosLider
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de servicios de Lider. Se ha actualizado la tabla de equivalencias.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
         '404':
           description: Not Found
           content:
@@ -513,18 +458,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
         '404':
           description: Not Found
           content:
@@ -566,18 +499,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
         '404':
           description: Not Found
           content:
@@ -598,7 +519,7 @@ paths:
       description: Permite subir la información del catalogo de bodegas en la que se relacionan las bodegas con el código de Siigo por medio de Excel al sistema.
       operationId: loadBodegas
       requestBody:
-        description: Parametro necesario para cargar la información de los códigoso
+        description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
@@ -619,18 +540,88 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
+        '404':
+          description: Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403'
+                $ref: '#/components/schemas/Error500'
+  /cargar/procesos:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información del catalogo de procesos de Lider.
+      description: Permite subir la información del catalogo de procesos en la que se relacionan las bodegas con el código de Siigo por medio de Excel al sistema.
+      operationId: loadProcesos
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de Procesos. Se ha actualizado la tabla de equivalencias.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/clientes:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de las bodegas de los clientes de Lider.
+      description: Permite subir la información del catalogo de bodegas en la que se relacionan las bodegas de los clientes con el código de Siigo por medio de Excel al sistema.
+      operationId: loadClientes
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de Clientes. Se ha actualizado la tabla de equivalencias.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
         '404':
           description: Not Found
           content:
@@ -664,18 +655,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
         '404':
           description: Not Found
           content:
@@ -688,51 +667,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error500'
-  /orden:
-    get:
-      tags:
-        - Orden
-      summary: Genera la información de las ordenes de producto
-      description: A partir  de la información de Insumos y Telas genera el formato para cargar en Siigo
-      operationId: ordenFormat
-      responses:
-        '200':
-          description: Tabla de equivalencias creada con exito
-          content:
-            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
-              schema:
-                type: string
-                format: binary
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
+
   /orden/insumos:
     post:
       tags:
@@ -741,7 +676,7 @@ paths:
       description: Permite cargar la información de las ordenes de producción relacionadas con los insumos
       operationId: ordenInsumos
       requestBody:
-        description: Parametro necesario para cargar la información de los creditos de los insumos
+        description: Parametro necesario para cargar la información de los créditos de los insumos
         required: true
         content:
           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
@@ -757,18 +692,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
         '404':
           description: Not Found
           content:
@@ -805,18 +728,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error403'
         '404':
           description: Not Found
           content:
@@ -837,7 +748,7 @@ paths:
       description: Permite cargar la información de las ordenes de producción relacionadas con las telas
       operationId: ordenTelas
       requestBody:
-        description: Parametro necesario para cargar la información de los creditos de las telas
+        description: Parametro necesario para cargar la información de los créditos de las telas
         required: true
         content:
           application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
@@ -853,18 +764,138 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
+        '404':
+          description: Not Found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '403':
-          description: Forbidden
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error403'
+                $ref: '#/components/schemas/Error500'
+  /orden/O1:
+    get:
+      tags:
+        - Orden
+      summary: Genera la información de las ordenes de producción
+      description: A partir de la información de Insumos y Telas genera el formato para cargar en Siigo
+      operationId: ordenFormatO1
+      parameters:
+        - name: ops
+          in: query
+          description: Ordenes de producción que se quieren obtener del sistema, si no se envia se asume que se quiere el historico de todas las ordenes de producción
+          schema:
+            type: string
+            format: int64
+            example: 18313,18889
+        - name: docNumber
+          in: query
+          description: Numero que se quiere que sea donde empieze el conteo de las ordenes de producción
+          schema:
+            type: integer
+            format: int64
+            example: 5
+      responses:
+        '200':
+          description: Tabla de equivalencias creada con exito
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /orden/procesos:
+    post:
+      tags:
+        - Orden
+      summary: Permite cargar información de las ordenes de producción de los productos en proceso y sus procesos a realizar
+      description: Permite cargar la información de las ordenes de producción relacionadas con los procesos y los productos
+      operationId: ordenProcesos
+      requestBody:
+        description: Parametro necesario para cargar la información de los créditos de los productos en proceso y los servicios asociados
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /orden/O2:
+    get:
+      tags:
+        - Orden
+      summary: Genera la información de las ordenes de producción terminadas
+      description: A partir de la información de productos en proceso y servicios genera el formato para cargar en Siigo
+      operationId: ordenFormatO2
+      parameters:
+        - name: ops
+          in: query
+          description: Ordenes de producción que se quieren obtener del sistema, si no se envia se asume que se quiere el historico de todas las ordenes de producción
+          schema:
+            type: string
+            format: int64
+            example: 18313,18889
+        - name: docNumber
+          in: query
+          description: Numero que se quiere que sea donde empieze el conteo de las ordenes de producción
+          schema:
+            type: integer
+            format: int64
+            example: 5
+      responses:
+        '200':
+          description: Tabla de equivalencias creada con exito
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
         '404':
           description: Not Found
           content:
