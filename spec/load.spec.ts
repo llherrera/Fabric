@@ -5,9 +5,9 @@ import path, { resolve } from 'path';
 import fs from 'fs';
 
 const rootFile = `${__dirname}/../uploads/`;
-/*
+
 describe('POST Uploads Siigo and Lider files routes', () => {
-    const equivalentRoot = path.join(rootFile, 'Base_Tabla_Equivalencias.xlsx');
+    const equivalentRoot = path.join(rootFile, 'Base_Tabla de Equivalencias Líder & CO.xlsx');
     const invalidRoot    = path.join(rootFile, 'Base_Tabla_Equivalencias.txt');
     beforeAll(() => {
         if (!fs.existsSync(equivalentRoot)) {
@@ -100,7 +100,6 @@ describe('POST Uploads Siigo and Lider files routes', () => {
             expect(response.body.msg).toMatch('Se ha creado el fichero de servicios de Lider. Se ha actualizado la tabla de equivalencias.');
         });
     });
-
 });
 
 describe("POST Uploads catalogue codes routes", () => {
@@ -153,7 +152,7 @@ describe("POST Uploads catalogue codes routes", () => {
 });
 
 describe("Upload and download one file to generate Equivalent table", () => {
-    let equivalentRoot = path.join(rootFile, 'Base_Tabla_Equivalencias.xlsx');
+    let equivalentRoot = path.join(rootFile, 'Base_Tabla de Equivalencias Líder & CO.xlsx');
     let invalidRoot    = path.join(rootFile, 'Base_Tabla_Equivalencias.txt');
     describe("POST Siigo and Lider codes cases", () => {
         it('should response with a 200 status code', async () => {
@@ -194,4 +193,3 @@ describe("Upload and download one file to generate Equivalent table", () => {
     });
 
 });
-*/

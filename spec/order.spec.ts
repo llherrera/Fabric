@@ -5,13 +5,24 @@ import path from 'path';
 import fs from 'fs';
 
 const rootFile = `${__dirname}/../uploads/`;
-/*
+
 describe('POST data to generate Siigo formats', () => {
-    const equivalentRoot = path.join(rootFile, 'Ejemplo_cargue_insumos.xlsx');
-    const invalidRoot    = path.join(rootFile, 'Ejemplo_cargue_insumos.txt');
+    const equivalentInsRoot = path.join(rootFile, 'Ejemplo_cargue_insumos.xlsx');
+    const equivalentTelRoot = path.join(rootFile, 'Ejemplo_cargue_telas.xlsx');
+    const equivalentTalRoot = path.join(rootFile, 'Ejemplo_cargue_tallas.xlsx');
+    const equivalentProRoot = path.join(rootFile, 'Ejemplo_cargue_procesos.xlsx');
     beforeAll(() => {
-        if (!fs.existsSync(equivalentRoot)) {
-            throw new Error(`File not found: ${equivalentRoot}`);
+        if (!fs.existsSync(equivalentInsRoot)) {
+            throw new Error(`File not found: ${equivalentInsRoot}`);
+        }
+        if (!fs.existsSync(equivalentTelRoot)) {
+            throw new Error(`File not found: ${equivalentTelRoot}`);
+        }
+        if (!fs.existsSync(equivalentTalRoot)) {
+            throw new Error(`File not found: ${equivalentTalRoot}`);
+        }
+        if (!fs.existsSync(equivalentProRoot)) {
+            throw new Error(`File not found: ${equivalentProRoot}`);
         }
     });
 
@@ -19,7 +30,7 @@ describe('POST data to generate Siigo formats', () => {
         it('should response with a 204 status code', async () => {
             const response = await request(app)
                 .post('/orden/insumos')
-                .attach('file', equivalentRoot);
+                .attach('file', equivalentInsRoot);
             expect(response.statusCode).toBe(204);
         });
 
@@ -44,7 +55,6 @@ describe('POST data to generate Siigo formats', () => {
         });
     });
 
-    const equivalentTelRoot = path.join(rootFile, 'Ejemplo_cargue_telas.xlsx');
     describe("POST data 'Telas' data to Siigo O1 format", () => {
         it('should response with a 204 status code', async () => {
             const response = await request(app)
@@ -54,7 +64,6 @@ describe('POST data to generate Siigo formats', () => {
         });
     });
 
-    const equivalentTalRoot = path.join(rootFile, 'Ejemplo_cargue_tallas.xlsx');
     describe("POST data 'Tallas' data to Siigo O1 format", () => {
         it('should response with a 204 status code', async () => {
             const response = await request(app)
@@ -64,7 +73,6 @@ describe('POST data to generate Siigo formats', () => {
         });
     });
 
-    const equivalentProRoot = path.join(rootFile, 'Ejemplo_cargue_procesos.xlsx');
     describe("POST data 'Process' data to Siigo O2 format", () => {
         it('should response with a 204 status code', async () => {
             const response = await request(app)
@@ -176,4 +184,3 @@ describe("GET Siigo formats", () => {
         }, 10*1000);
     });
 });
-*/
