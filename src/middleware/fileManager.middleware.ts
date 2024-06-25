@@ -1,53 +1,44 @@
 import { Request, Response, NextFunction } from "express";
-import { Path } from "../utils/constants";
+import multer from 'multer';
 
 export interface ExtRequest extends Record<string, any> {};
 
-const multer = require('multer');
-
 const fileFilter = (req: Request, file: any, cb: any) => {
     const allowedMimes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
-    if (allowedMimes.includes(file.mimetype) && req.path === Path.Load) {
+    if (allowedMimes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('Invalid file type'), false);
+        return cb(new Error('Invalid file type'));
     }
 }
 
 const storage = multer.diskStorage({
     destination: function (req: Request, file: any, cb: any) {
-      cb(null, "uploads");
+        cb(null, "uploads");
     },
     filename: function (req: Request, file: any, cb: any) {
-      cb(null,file.originalname);
+        cb(null,file.originalname);
     },
 });
-
-//const storage = multer.memoryStorage();
 
 const upload = multer({ 
     fileFilter,
     storage
 });
 
-export const fileManager = async (req: ExtRequest, res: Response, next: NextFunction) => {
+export const fileManager = async (req: any, res: Response, next: NextFunction) => {
     upload.single('file')(req, res, async (err: any) => {
         if (err instanceof multer.MulterError) {
-            return res.status(400).json({
-                msg: err.message
-            });
+            return res.status(400).json({msg: err.message});
         } else if (err) {
-            return res.status(500).json({
-                msg: 'Error uploading file',
-                error: err.message
-            });
+            return res.status(400).json({msg: `Error uploading file. ${err.message}`});
         }
         try {
             const file = req.file;
-            req.body = {...req.body, path: file.path}
+            req.body = {...req.body, path_file: file.path}
             next();
         } catch (error) {
-            res.status(500).json({msg: error});
+            return res.status(500).json({msg: error.message});
         }
     });
 }

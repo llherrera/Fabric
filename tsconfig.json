@@ -1,22 +1,24 @@
 {
     "compilerOptions": {
         "target": "es6",
-        "module": "commonjs",
+        "module": "CommonJS",
         "outDir": "dist",
         "strict": true,
         "baseUrl": "./",
+        "lib": ["ES2021"],
         "typeRoots": ["src/types/variables.d.ts"],
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "useUnknownInCatchVariables": false
+        "useUnknownInCatchVariables": false,
+        "resolveJsonModule": true
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
     ],
     "exclude": [
         "node_modules",
-        "**/*.spec.ts"
+        "spec/**/*"
     ],
     "ts-node": {
         "esm": true

@@ -1,0 +1,1161 @@
+openapi: 3.0.1
+info:
+  title: Lider-Cloudappi
+  version: 1.0.0
+  description: Lider-Cloudappi API
+  contact:
+    name: Cloudappi
+    email: leonardo.herrera.co@cloudappi.net
+
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+tags:
+  - name: Cargar
+    description: Rutas que permiten cargar información sobre las telas, insumos y productos que se manejan en Lider & CO
+  - name: Orden
+    description: Rutas que permiten obtener el formato a subir en Siigo a partir de los datos de las ordenes de compra
+
+paths:
+  /cargar/codigos:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información necesaria para la tabla de equivalencias desde un solo archivo
+      description: Permite subir la información de los codigos y descripciones en la que se relacionan los insumos, telas y productos con el código de Siigo por medio de Excel al sistema
+      operationId: loadEquivalencias
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Tabla de equivalencias creada con exito
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/catalogo:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información necesaria para la tabla de equivalencias desde un solo archivo
+      description: Permite subir la información de los codigos y descripciones en la que se relacionan los colores, tallas y bodegas con el código de Siigo por medio de Excel al sistema
+      operationId: loadCatalogueEquivalencias
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: Tabla de equivalencias creada con exito
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/insumos-siigo:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los insumos según Siigo.
+      description: Permite subir la información de los insumos en la que se relacionan los códigos de Siigo con los nombre de insumos por medio de Excel al sistema.
+      operationId: loadInsumosSiigo
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de insumos de Siigo. Se ha actualizado la tabla de equivalencias.
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de insumos de Siigo. No se tiene la información necesaria para poder crear las equivalencias de los insumos, falta crear el fichero de insumos de Lider.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/telas-siigo:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de las telas según Siigo.
+      description: Permite subir la información de las telas en la que se relacionan los códigos de Siigo con los nombre de las telas por medio de Excel al sistema.
+      operationId: loadTelasSiigo
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de telas de Siigo. Se ha actualizado la tabla de equivalencias.
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de telas de Siigo. No se tiene la información necesaria para poder crear las equivalencias de las telas, falta crear el fichero de telas de Lider.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/productos-siigo:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los productos según Siigo.
+      description: Permite subir la información de los productos en la que se relacionan los códigos de Siigo con los nombre de los productos por medio de Excel al sistema.
+      operationId: loadProductosSiigo
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de productos de Siigo. Se ha actualizado la tabla de equivalencias.
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de productos de Siigo. No se tiene la información necesaria para poder crear las equivalencias de los productos, falta crear el fichero de productos de Lider.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/insumos-lider:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los insumos según Lider.
+      description: Permite subir la información de los insumos en la que se relacionan la descripción y color de los insumos en la base de datos de Lider por medio de Excel al sistema.
+      operationId: loadInsumosLider
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de insumos de Lider. Se ha actualizado la tabla de equivalencias.
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de insumos de Lider. No se tiene la información necesaria para poder crear las equivalencias de los insumos, falta crear el fichero de insumos de Siigo.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/telas-lider:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de las telas según Lider.
+      description: Permite subir la información de las telas en la que se relacionan la descripción y color de las telas en la base de datos de Lider por medio de Excel al sistema.
+      operationId: loadTelasLider
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de telas de Lider. Se ha actualizado la tabla de equivalencias.
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de telas de Lider. No se tiene la información necesaria para poder crear las equivalencias de las telas, falta crear el fichero de telas de Siigo.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/productos-lider:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los productos según Lider.
+      description: Permite subir la información de los productos en la que se relacionan la referencia antigua y color de los productos en la base de datos de Lider por medio de Excel al sistema.
+      operationId: loadProductosLider
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de productos de Lider. Se ha actualizado la tabla de equivalencias.
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de productos de Lider. No se tiene la información necesaria para poder crear las equivalencias de los productos, falta crear el fichero de productos de Siigo.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/servicios-lider:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de los servicios según Lider.
+      description: Permite subir la información de los servicios en la que se relacionan con los codigos de Siigo en la base de datos de Lider por medio de Excel al sistema.
+      operationId: loadServiciosLider
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de servicios de Lider. Se ha actualizado la tabla de equivalencias.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/tallas:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información del catalogo de tallas de Lider.
+      description: Permite subir la información del catalogo de tallas en la que se relacionan las tallas con el código de Siigo por medio de Excel al sistema.
+      operationId: loadTallas
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de Tallas. Se ha actualizado la tabla de equivalencias.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/colores:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información del catalogo de colores de Lider.
+      description: Permite subir la información del catalogo de colores en la que se relacionan los colores con el código de Siigo por medio de Excel al sistema.
+      operationId: loadColores
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de Colores. Se ha actualizado la tabla de equivalencias.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/bodegas:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información del catalogo de bodegas de Lider.
+      description: Permite subir la información del catalogo de bodegas en la que se relacionan las bodegas con el código de Siigo por medio de Excel al sistema.
+      operationId: loadBodegas
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de Bodegas. Se ha actualizado la tabla de equivalencias.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/procesos:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información del catalogo de procesos de Lider.
+      description: Permite subir la información del catalogo de procesos en la que se relacionan las bodegas con el código de Siigo por medio de Excel al sistema.
+      operationId: loadProcesos
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de Procesos. Se ha actualizado la tabla de equivalencias.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/clientes:
+    post:
+      tags:
+        - Cargar
+      summary: Permite subir la información de las bodegas de los clientes de Lider.
+      description: Permite subir la información del catalogo de bodegas en la que se relacionan las bodegas de los clientes con el código de Siigo por medio de Excel al sistema.
+      operationId: loadClientes
+      requestBody:
+        description: Parametro necesario para cargar la información de los códigos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                example: Se ha creado el fichero de Clientes. Se ha actualizado la tabla de equivalencias.
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /cargar/equivalencias:
+    get:
+      tags:
+        - Cargar
+      summary: Permite obtener la tabla de equivalencias
+      description: Permite obtener la tabla de equivalencias en la que relacionan los nombres de los insumos, telas, productos y su respectivo con los códigos de Siigo
+      operationId: equivalencias
+      responses:
+        '200':
+          description: Tabla de equivalencias creada con exito
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+
+  /orden/insumos:
+    post:
+      tags:
+        - Orden
+      summary: Permite cargar información de las ordenes de producción de insumos
+      description: Permite cargar la información de las ordenes de producción relacionadas con los insumos
+      operationId: ordenInsumos
+      requestBody:
+        description: Parametro necesario para cargar la información de los créditos de los insumos
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /orden/tallas:
+    post:
+      tags:
+        - Orden
+      summary: Permite cargar información de las ordenes de producciónd de tallas
+      description: Permite cargar la información de las ordenes de producción relacionadas con las tallas
+      operationId: ordenTallas
+      requestBody:
+        description: Parametro necesario para cargar la información de los productos agrupados por tallas
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /orden/telas:
+    post:
+      tags:
+        - Orden
+      summary: Permite cargar información de las ordenes de producciónd de telas
+      description: Permite cargar la información de las ordenes de producción relacionadas con las telas
+      operationId: ordenTelas
+      requestBody:
+        description: Parametro necesario para cargar la información de los créditos de las telas
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /orden/O1:
+    get:
+      tags:
+        - Orden
+      summary: Genera la información de las ordenes de producción
+      description: A partir de la información de Insumos y Telas genera el formato para cargar en Siigo
+      operationId: ordenFormatO1
+      parameters:
+        - name: ops
+          in: query
+          description: Ordenes de producción que se quieren obtener del sistema, si no se envia se asume que se quiere el historico de todas las ordenes de producción
+          schema:
+            type: string
+            format: int64
+            example: 18313,18889
+        - name: docNumber
+          in: query
+          description: Numero que se quiere que sea donde empieze el conteo de las ordenes de producción
+          schema:
+            type: integer
+            format: int64
+            example: 5
+      responses:
+        '200':
+          description: Tabla de equivalencias creada con exito
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /orden/procesos:
+    post:
+      tags:
+        - Orden
+      summary: Permite cargar información de las ordenes de producción de los productos en proceso y sus procesos a realizar
+      description: Permite cargar la información de las ordenes de producción relacionadas con los procesos y los productos
+      operationId: ordenProcesos
+      requestBody:
+        description: Parametro necesario para cargar la información de los créditos de los productos en proceso y los servicios asociados
+        required: true
+        content:
+          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /orden/O2:
+    get:
+      tags:
+        - Orden
+      summary: Genera la información de las ordenes de producción terminadas
+      description: A partir de la información de productos en proceso y servicios genera el formato para cargar en Siigo
+      operationId: ordenFormatO2
+      parameters:
+        - name: ops
+          in: query
+          description: Ordenes de producción que se quieren obtener del sistema, si no se envia se asume que se quiere el historico de todas las ordenes de producción
+          schema:
+            type: string
+            format: int64
+            example: 18313,18889
+        - name: docNumber
+          in: query
+          description: Numero que se quiere que sea donde empieze el conteo de las ordenes de producción
+          schema:
+            type: integer
+            format: int64
+            example: 5
+      responses:
+        '200':
+          description: Tabla de equivalencias creada con exito
+          content:
+            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+              schema:
+                type: string
+                format: binary
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Error400:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Bad Request
+        fields:
+          type: string
+    Error401:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Unauthorized
+        fields:
+          type: string
+    Error402:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Payment Required
+        fields:
+          type: string
+    Error403:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Forbidden
+        fields:
+          type: string
+    Error404:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Not Found
+        fields:
+          type: string
+    Error405:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Method Not Allowed
+        fields:
+          type: string
+    Error406:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Not Acceptable
+        fields:
+          type: string
+    Error407:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Proxy Authentication Required
+        fields:
+          type: string
+    Error408:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Request Timeout
+        fields:
+          type: string
+    Error409:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Conflict
+        fields:
+          type: string
+    Error410:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Gone
+        fields:
+          type: string
+    Error500:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Internal Server Error
+        fields:
+          type: string
+    Error501:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Not Implemented
+        fields:
+          type: string
+    Error502:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Bad Gateway
+        fields:
+          type: string
+    Error503:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Service Unavailable
+        fields:
+          type: string
+    Error504:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Gateway Timeout
+        fields:
+          type: string
+    Error505:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: HTTP Version Not Supported
+        fields:
+          type: string
+    Error506:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Variant Also Negotiates
+        fields:
+          type: string
+    Error507:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Insufficient Storage
+        fields:
+          type: string
+    Error508:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Loop Detected
+        fields:
+          type: string
+    Error509:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Bandwidth Limit Exceeded
+        fields:
+          type: string
+    Error510:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+          example: Not Extended
+        fields:
+          type: string
