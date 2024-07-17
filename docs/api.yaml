@@ -29,18 +29,16 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: Tabla de equivalencias creada con exito
           content:
-            application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+            multipart/form-data:
               schema:
-                type: string
-                format: binary
+                $ref: '#/components/schemas/FileUpload'
         '400':
           description: Bad Request
           content:
@@ -70,10 +68,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: Tabla de equivalencias creada con exito
@@ -111,10 +108,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: OK
@@ -159,10 +155,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: OK
@@ -207,10 +202,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: OK
@@ -255,10 +249,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: OK
@@ -303,10 +296,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: OK
@@ -351,10 +343,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: OK
@@ -399,10 +390,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: OK
@@ -440,10 +430,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: OK
@@ -481,10 +470,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: OK
@@ -522,10 +510,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: OK
@@ -563,10 +550,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: OK
@@ -604,10 +590,9 @@ paths:
         description: Parametro necesario para cargar la información de los códigos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '200':
           description: OK
@@ -679,10 +664,9 @@ paths:
         description: Parametro necesario para cargar la información de los créditos de los insumos
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '204':
           description: OK
@@ -715,10 +699,9 @@ paths:
         description: Parametro necesario para cargar la información de los productos agrupados por tallas
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '204':
           description: OK
@@ -751,10 +734,9 @@ paths:
         description: Parametro necesario para cargar la información de los créditos de las telas
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '204':
           description: OK
@@ -835,10 +817,9 @@ paths:
         description: Parametro necesario para cargar la información de los créditos de los productos en proceso y los servicios asociados
         required: true
         content:
-          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet:
+          multipart/form-data:
             schema:
-              type: string
-              format: binary
+              $ref: '#/components/schemas/FileUpload'
       responses:
         '204':
           description: OK
@@ -917,6 +898,12 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    FileUpload:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
     Error400:
       type: object
       properties:

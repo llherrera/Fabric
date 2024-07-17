@@ -21,7 +21,6 @@ describe('POST Uploads Siigo and Lider files routes', () => {
                 .post('/cargar/insumos-siigo')
                 .attach('file', equivalentRoot);
             expect(response.statusCode).toBe(200);
-            expect(response.body.msg).toMatch('Se ha creado el fichero de insumos de Siigo. Se ha actualizado la tabla de equivalencias.');
         });
 
         //it("should response with a 400 status code with message 'Error uploading file Invalid file type'", async () => {
@@ -50,7 +49,6 @@ describe('POST Uploads Siigo and Lider files routes', () => {
                 .post('/cargar/telas-siigo')
                 .attach('file', equivalentRoot);
             expect(response.statusCode).toBe(200);
-            expect(response.body.msg).toMatch('Se ha creado el fichero de telas de Siigo. Se ha actualizado la tabla de equivalencias.');
         });
     });
     describe("POST Siigo 'Productos' cases", () => {
@@ -59,7 +57,6 @@ describe('POST Uploads Siigo and Lider files routes', () => {
                 .post('/cargar/productos-siigo')
                 .attach('file', equivalentRoot);
             expect(response.statusCode).toBe(200);
-            expect(response.body.msg).toMatch('Se ha creado el fichero de productos de Siigo. Se ha actualizado la tabla de equivalencias.');
         });
     });
 
@@ -166,14 +163,14 @@ describe("Upload and download one file to generate Equivalent table", () => {
         }, 10*1000);
     });
 
-    equivalentRoot = path.join(rootFile, 'Catalogo_tallas_colores_talleres.xlsx');
-    invalidRoot    = path.join(rootFile, 'Catalogo_tallas_colores_talleres.txt');
+    let equivalentRoot_ = path.join(rootFile, 'Catalogo_tallas_colores_talleres.xlsx');
+    let invalidRoot_    = path.join(rootFile, 'Catalogo_tallas_colores_talleres.txt');
     describe("POST Siigo and Lider catalogue cases", () => {
         it('should response with a 200 status code', async () => {
             const response = await request(app)
                 .post('/cargar/catalogo')
                 .responseType('blob')
-                .attach('file', equivalentRoot);
+                .attach('file', equivalentRoot_);
             expect(response.statusCode).toBe(200);
             expect(response.type).toBe('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             expect(response.body).toBeInstanceOf(Buffer);

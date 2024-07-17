@@ -135,47 +135,6 @@ export class SiigoFormat {
     setCodigoProducto(value: number) {this.CODIGO_PRODUCTO = value;}
 
     setCantidad(value: number) {this.CANTIDAD = value;}
-
     
-
-
-    getTipoComprobante() {return this.TIPO_DE_COMPROBANTE;}
-    
-    getCodigoComprobante() {return this.CODIGO_COMPROBANTE;}
-
-    getNumeroDocumento() {return this.NUMERO_DE_DOCUMENTO;}
-
-    getCuentaContable() {return this.CUENTA_CONTABLE;}
-
-    getDebitoCredito() {return this.DEBITO_O_CREDITO;}
-
-    getValorSecuencia() {return this.VALOR_DE_LA_SECUENCIA;}
-
-    getAnnoDocumento() {return this.ANNO_DEL_DOCUMENTO;}
-
-    getMesDocumento() {return this.MES_DEL_DOCUMENTO;}
-
-    getDiaDocumento() {return this.DIA_DEL_DOCUMENTO;}
-
-    getSecuencia() {return this.SECUENCIA;}
-
-    getCentroCosto() {return this.CENTRO_DE_COSTO;}
-
-    getNIT() {return this.NIT;}
-
-    getDescripcion() {return this.DESCRIPCION_DE_LA_SECUENCIA;}
-
-    getLineaProducto() {return this.LINEA_PRODUCTO;}
-
-    getGrupoProducto() {return this.GRUPO_PRODUCTO;}
-
-    getCodigoProducto() {return this.CODIGO_PRODUCTO;}
-
-    getCantidad() {return this.CANTIDAD;}
-
-    getCodigoBodega() {return this.CODIGO_DE_LA_BODEGA;}
-
-    getTalla() {return this.CLASIFICACION_1;}
-
-    getColor() {return this.CLASIFICACION_2;}
+    setCodigoBodega2(value: number) {this.CODIGO_DE_LA_BODEGA = value;}
 }

@@ -68,7 +68,7 @@ export const generateTelasSiigoFile = async (req: Request, res: Response) => {
         await funct.readFileToGenerateJsonFile(path_file, 1, 2, 4, FILES_NAME.SiigoTelas);
         logger.info("Created JSON with 'Telas' codes in Siigo");
         msg = 'Se ha creado el fichero de telas de Siigo';
-        if (!fs.existsSync(`uploads/${FILES_NAME.SiigoTelas}.json`))
+        if (!fs.existsSync(`uploads/${FILES_NAME.LiderTelas}.json`))
             return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de las telas, falta crear el fichero de telas de Lider.`});
         funct.addEquivalent(`uploads/${FILES_NAME.LiderTelas}.json`, `uploads/${FILES_NAME.SiigoTelas}.json`, FILES_NAME.CodesNameTelas, false);
         logger.info("Updated Equivalent table");
@@ -93,7 +93,7 @@ export const generateTelasLiderFile = async (req: Request, res: Response) => {
         await funct.readFileToGenerateJsonFile(path_file, 1, 3, 1, FILES_NAME.LiderTelas);
         logger.info("Created JSON with 'Telas' codes in Lider");
         msg = 'Se ha creado el fichero de telas de Lider';
-        if (!fs.existsSync(`uploads/${FILES_NAME.LiderTelas}.json`))
+        if (!fs.existsSync(`uploads/${FILES_NAME.SiigoTelas}.json`))
             return res.status(200).json({msg: `${msg}. No se tiene la información necesaria para poder crear las equivalencias de las telas, falta crear el fichero de telas de Siigo.`});
         funct.addEquivalent(`uploads/${FILES_NAME.LiderTelas}.json`, `uploads/${FILES_NAME.SiigoTelas}.json`, FILES_NAME.CodesNameTelas, false);
         logger.info("Updated Equivalent table");

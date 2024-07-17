@@ -32,7 +32,7 @@ export const setOrderTelas = async (req: Request, res: Response) => {
     }
     try {
         logger.info("Start generating JSON with 'Telas' credits");
-        await funct.readInputFile(path_file, FILES_NAME.CreditosTelas, 2, 2);
+        await funct.readInputFile(path_file, FILES_NAME.CreditosTelas, 1, 2);
         logger.info("Created JSON with 'Telas' credits");
         res.status(204).json();
     } catch (error) {

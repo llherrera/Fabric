@@ -52,8 +52,8 @@ export const readFileToGenerateJsonFile = async (path: string, row_: number, she
     let jsonData: JSONInterface = {};
 
     logger.info(`Fill the empty columns with 'BLANCO'`);
-    const colums = worksheet.getColumn(key+1);
     if (filename === FILES_NAME.LiderInsum || filename === FILES_NAME.LiderTelas || filename === FILES_NAME.LiderProds) {
+        const colums = worksheet.getColumn(key+1);
         colums.eachCell((cell) => {
             if (cell.value === null) cell.value = 'BLANCO';
         });
@@ -82,7 +82,7 @@ export const readFileToGenerateJsonFile = async (path: string, row_: number, she
             jsonData = { ...jsonData,...rowData};
         }
     });
-    fs.writeFileSync(`./uploads/${filename}.json`, JSON.stringify(jsonData));
+    fs.writeFileSync(`uploads/${filename}.json`, JSON.stringify(jsonData));
     logger.info(`JSON file created`);
     //delete_file ? fs.unlinkSync(path) : null;
 }
@@ -167,7 +167,7 @@ export const addCatalogue = (cat_path: string, name: string) => {
     fs.writeFileSync(`uploads/equivalencias.json`, JSON.stringify(data));
     logger.info(`Equivalent JSON file updated`);
 }
-
+//192.168.1.254:8080
 export const doTable = async (path: string, filename: string) => {
     await readFileToGenerateJsonFile(path, 1, 0, 4, FILES_NAME.SiigoInsum, false);
     await readFileToGenerateJsonFile(path, 1, 1, 2, FILES_NAME.LiderInsum, false);
@@ -302,14 +302,13 @@ const getSiigoCode = (key_lider: string, file_siigo: JSONInterface, isCode: bool
 
             let valueNombre   = dc(nombreS, nombreL);
             let valueComercial = dc(comercialS, comercialL);
-            if (valueNombre > assertion && valueComercial > assertion) {
-                if (valueNombre > maxAssertion && (valueComercial >= maxAssertionT || valueComercial > assertion)) {
-                    maxKey = key;
-                    maxAssertion = valueNombre;
-                    maxAssertionT = valueComercial;
-                } 
+            let sumValues = (valueNombre + valueComercial)/2;
+            if (sumValues > assertion) {
+                maxKey = key;
+                maxAssertion = sumValues;
+                //maxAssertionT = valueComercial;
             }
-        } else if (matchLider === null && matchSiigo === null) {
+        } else {
             if (valueCoef > assertion) {
                 if (valueCoef > maxAssertion) {
                     maxKey = key;
@@ -417,6 +416,8 @@ const doDataToFormat2 = () => {
         const items = processData[op];
         let cantxprocSum = 0;
         let secuencia = 1;
+        const item = items[0];
+        const fallido   = item['tipo de producto'];
         for (let i = 0; i < items.length; i++) {
             logger.info(`Making product on process register`);
             const taller    = items[i]['Taller'];
@@ -431,7 +432,7 @@ const doDataToFormat2 = () => {
                 2,
                 CProceso,
                 'C',
-                `OP ${op}`,
+                `OP ${op}${fallido === 'CONFORME' ? '' : fallido === 'SEGUNDAS' ? ' IMP' : ' (No está contemplado este caso)'}`,
                 ingresInt,
                 12,
                 "1"
@@ -457,7 +458,6 @@ const doDataToFormat2 = () => {
             }
         }
         secuencia = secuencia + 1;
-        const item = items[0];
         const procesos = item['Procesos'];
         const cantxpro = item['Cant_X_proceso'];
         let refItem = item['Referencia Producto Terminado'];
@@ -520,7 +520,7 @@ const doDataToFormat2 = () => {
                 2,
                 cuenta,
                 'C',
-                `${procesoi} - OP ${op}`,
+                fallido === 'CONFORME' ? `${procesoi} - OP ${op}` : fallido === 'SEGUNDAS' ? `OP ${op} IMP` : `OP ${op} (No está contemplado este caso)`,
                 cantxprocSum*cantxproi,
                 12,
                 "",
@@ -555,7 +555,7 @@ const doDataToFormat2 = () => {
                 2,
                 CTerminado,
                 'D',
-                `OP ${op}`,
+                `OP ${op}${fallido === 'CONFORME' ? '' : fallido === 'SEGUNDAS' ? ' IMP' : ' (No está contemplado este caso)'}`,
                 ingresInt,
                 12,
                 "1"
@@ -568,7 +568,8 @@ const doDataToFormat2 = () => {
             logger.info(`Register has Color code`);
             register.setTalla(talla, FILES_NAME.CodesNameTalla);
             logger.info(`Register has 'Talla'`);
-            register.setCodigoClient(cliente, FILES_NAME.CodesNameClien, FILES_NAME.CodesNameBodeg);
+            fallido === 'CONFORME' ? register.setCodigoClient(cliente, FILES_NAME.CodesNameClien, FILES_NAME.CodesNameBodeg) :
+            fallido === 'SEGUNDAS' ? register.setCodigoBodega2(24) : null;
             logger.info(`Register has 'Client'`);
             if (coleccion.has(op)) {
                 register.setSecuencia(secuencia);

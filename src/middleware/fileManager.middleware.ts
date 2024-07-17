@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import multer from 'multer';
+import path from "path";
+import fs from 'fs';
 
 export interface ExtRequest extends Record<string, any> {};
 
@@ -20,7 +22,15 @@ const storage = multer.diskStorage({
         cb(null,file.originalname);
     },
 });
-
+/*
+destination: function (req: Request, file: any, cb: any) {
+        const uploadsDir = path.resolve(__dirname, '../../uploads');
+        if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        cb(null, uploadsDir);
+    },
+*/
 const upload = multer({ 
     fileFilter,
     storage
